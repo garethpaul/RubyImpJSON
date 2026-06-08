@@ -36,6 +36,11 @@ Contribution rules:
 
 ## Security And Responsible Use
 
+Canonical security policy and reporting:
+
+- [`SECURITY.md`](SECURITY.md)
+
+
 JSON parsers handle untrusted input. Changes should preserve tests for malformed
 documents, encoding edge cases, nesting, and resource-heavy payloads, and should
 avoid weakening validation without clear rationale.
