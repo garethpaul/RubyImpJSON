@@ -12,11 +12,17 @@ This README is based on the checked-in source, manifests, scripts, and repositor
 ## Repository Contents
 
 - `README.md` - project overview and local usage notes
+- `ARCHIVE_STATUS.md` - historical snapshot and verification baseline
+- `CHANGES.md` - maintenance history for archive verification
+- `Makefile` - local verification entry points
 - `data` - source or example code
+- `docs/plans` - completed maintenance plans for the current baseline
 - `ext` - source or example code
 - `Gemfile`
 - `java` - source or example code
 - `lib` - source or example code
+- `plans` - historical implementation notes
+- `scripts` - archive metadata validators
 - `SECURITY.md` - security reporting and disclosure guidance
 - `tests` - source or example code
 - `tools` - source or example code
@@ -58,6 +64,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - `make check` delegates to `make verify`, which runs archive metadata checks
   and the pure-Ruby test corpus with `JSON=pure`, avoiding Bundler and native
   extension compilation for the default local verification path.
+- The archive metadata check also requires completed canonical plans under
+  `docs/plans`.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -77,6 +85,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - See `ARCHIVE_STATUS.md` for the historical snapshot boundary and verification baseline.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
+- See `docs/plans/2026-06-08-rubyimpjson-baseline.md` for the canonical
+  archive verification baseline.
 
 ## Contributing
 

@@ -18,6 +18,9 @@ Use `make verify` for local maintenance checks. The default verification path
 forces `JSON=pure` and avoids Bundler/native-extension compilation so the
 archived pure Ruby implementation is exercised consistently.
 
+The canonical maintenance baseline is recorded in
+`docs/plans/2026-06-08-rubyimpjson-baseline.md`.
+
 ## Change Policy
 
 - Keep behavior changes tied to fixtures or tests.

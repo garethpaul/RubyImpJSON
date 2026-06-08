@@ -3,6 +3,18 @@
 
 failures = []
 
+docs_plans = Dir['docs/plans/*.md'].sort
+canonical_plan = 'docs/plans/2026-06-08-rubyimpjson-baseline.md'
+failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
+failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
+
+docs_plans.each do |plan_path|
+  plan = File.read(plan_path)
+  unless plan.include?('Status: Completed') && plan.include?('make check')
+    failures << "#{plan_path} must record completed status and make check verification"
+  end
+end
+
 version = File.read('VERSION').strip
 version_source = File.read('lib/json/version.rb')
 unless version_source.include?("VERSION         = '#{version}'")

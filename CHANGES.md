@@ -11,3 +11,5 @@
   Bundler/native-extension test path.
 - Added `ARCHIVE_STATUS.md` and metadata checks that keep historical snapshot
   status, version, and `JSON=pure` verification expectations explicit.
+- Added canonical `docs/plans` coverage and made archive metadata checks
+  require completed plans.
