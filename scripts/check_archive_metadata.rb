@@ -33,6 +33,17 @@ failures << 'Rakefile must define do_test_pure' unless rakefile.include?("t.name
 readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')
+failures << 'README.md must link ARCHIVE_STATUS.md' unless readme.include?('ARCHIVE_STATUS.md')
+
+if File.exist?('ARCHIVE_STATUS.md')
+  archive_status = File.read('ARCHIVE_STATUS.md')
+  failures << 'ARCHIVE_STATUS.md must declare historical snapshot status' unless archive_status.include?('historical snapshot')
+  failures << "ARCHIVE_STATUS.md must document version #{version}" unless archive_status.include?("Version: #{version}")
+  failures << 'ARCHIVE_STATUS.md must document JSON=pure verification' unless archive_status.include?('JSON=pure')
+  failures << 'ARCHIVE_STATUS.md must preserve security-relevant parser fixtures' unless archive_status.include?('security-relevant parser fixtures')
+else
+  failures << 'ARCHIVE_STATUS.md is missing'
+end
 
 if failures.empty?
   puts 'Archive metadata checks passed'

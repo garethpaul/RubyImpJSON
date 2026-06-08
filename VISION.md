@@ -22,7 +22,6 @@ Priority:
 
 Next priorities:
 
-- Document whether this repo is an archive or an active fork
 - Add reproduction notes for running tests on supported Ruby versions
 - Clarify native extension and JRuby build expectations
 - Review parser fixtures for security-regression value

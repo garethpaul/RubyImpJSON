@@ -48,6 +48,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 
 ## Running or Using the Project
 
+- Read `ARCHIVE_STATUS.md` before treating this repository as an active fork or
+  supported gem release.
 - No single runtime entry point was identified. Start by reading the source files and manifests listed above.
 
 ## Testing and Verification
@@ -72,6 +74,7 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 ## Maintenance Notes
 
+- See `ARCHIVE_STATUS.md` for the historical snapshot boundary and verification baseline.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

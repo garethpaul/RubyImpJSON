@@ -1,0 +1,27 @@
+# Archive Status
+
+## Status
+
+This repository is a historical snapshot, not an active JSON gem fork.
+
+## Preserved Surface
+
+- Version: 1.7.5
+- Pure Ruby parser and generator implementation
+- Native extension sources
+- JRuby-related Java sources and gemspec metadata
+- Parser, generator, encoding, additions, and fixture tests
+
+## Verification Baseline
+
+Use `make verify` for local maintenance checks. The default verification path
+forces `JSON=pure` and avoids Bundler/native-extension compilation so the
+archived pure Ruby implementation is exercised consistently.
+
+## Change Policy
+
+- Keep behavior changes tied to fixtures or tests.
+- Do not remove native or JRuby artifacts without an archive rationale.
+- Do not claim modern gem support without a dedicated compatibility plan.
+- Preserve security-relevant parser fixtures for malformed JSON and encoding
+  edge cases.

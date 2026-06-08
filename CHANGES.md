@@ -8,3 +8,5 @@
   wiring, and README verification instructions.
 - Documented the `JSON=pure` verification path separately from the historical
   Bundler/native-extension test path.
+- Added `ARCHIVE_STATUS.md` and metadata checks that keep historical snapshot
+  status, version, and `JSON=pure` verification expectations explicit.
