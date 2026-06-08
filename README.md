@@ -1,16 +1,14 @@
 # RubyImpJSON
 
-<!-- README-OVERVIEW-IMAGE -->
-![Project overview](docs/readme-overview.svg)
-
 ## Overview
 
-`garethpaul/RubyImpJSON` is a Ruby project. No GitHub description is currently set.
+`garethpaul/RubyImpJSON` is a Ruby project. The checked-in files describe a Ruby project with the structure summarized below.
 
 This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: Ruby (35), Java (12), C/C++ headers (3), C (2), JavaScript (1).
 
 ## Repository Contents
 
+- `README.md` - project overview and local usage notes
 - `data` - source or example code
 - `ext` - source or example code
 - `Gemfile`
@@ -74,3 +72,4 @@ When the required SDK or runtime is unavailable, use static checks and source re
 ## Contributing
 
 Keep changes small and tied to the project that is already present in this repository. For code changes, document the toolchain used, avoid committing generated dependency directories or local configuration, and update this README when setup or verification steps change.
+
