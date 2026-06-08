@@ -55,9 +55,9 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 ## Testing and Verification
 
 - `bundle exec rake test` or the repository-specific Ruby test command
-- `make verify` runs archive metadata checks and the pure-Ruby test corpus with
-  `JSON=pure`, avoiding Bundler and native extension compilation for the default
-  local verification path.
+- `make check` delegates to `make verify`, which runs archive metadata checks
+  and the pure-Ruby test corpus with `JSON=pure`, avoiding Bundler and native
+  extension compilation for the default local verification path.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 

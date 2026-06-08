@@ -1,4 +1,4 @@
-.PHONY: lint test build verify
+.PHONY: build check lint test verify
 
 lint:
 	ruby scripts/check_archive_metadata.rb
@@ -9,3 +9,5 @@ test:
 build: lint
 
 verify: lint test build
+
+check: verify

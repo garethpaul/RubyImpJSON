@@ -2,6 +2,7 @@
 
 ## 2026-06-08
 
+- Added `make check` as the shared repository verification alias.
 - Added a Bundler-free `make verify` gate for archive metadata and the pure-Ruby
   JSON test corpus.
 - Added metadata checks for version consistency, fixture presence, Rake pure-test
