@@ -40,7 +40,7 @@ JSON parsers handle untrusted input. Changes should preserve tests for malformed
 documents, encoding edge cases, nesting, and resource-heavy payloads, and should
 avoid weakening validation without clear rationale.
 
-## What We Will Not Merge For Now
+## What We Will Not Merge (For Now)
 
 - Parser behavior changes without fixtures
 - Packaging claims that conflict with the archived version
