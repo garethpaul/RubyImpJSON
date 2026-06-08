@@ -46,3 +46,6 @@ avoid weakening validation without clear rationale.
 - Packaging claims that conflict with the archived version
 - Removal of security-relevant tests
 - Broad modernization that obscures historical behavior
+
+This list is a roadmap guardrail, not a permanent rule.
+Strong user demand and strong technical rationale can change it.
