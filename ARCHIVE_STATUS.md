@@ -11,6 +11,7 @@ This repository is a historical snapshot, not an active JSON gem fork.
 - Native extension sources
 - JRuby-related Java sources and gemspec metadata
 - Parser, generator, encoding, additions, and fixture tests
+- Malformed-input fixtures, including the unterminated block comment case
 
 ## Verification Baseline
 

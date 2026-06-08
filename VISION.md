@@ -18,6 +18,7 @@ Priority:
 - Preserve parser, generator, fixture, and gemspec files
 - Keep README and changelog context available
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
+- Preserve malformed-input fixtures such as unterminated block comments
 - Keep completed maintenance plans under `docs/plans`
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 

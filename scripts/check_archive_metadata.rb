@@ -39,6 +39,16 @@ fixture_counts.each do |label, count|
   failures << "expected at least one #{label}" if count.zero?
 end
 
+unterminated_comment_fixture = 'tests/fixtures/fail29.json'
+if File.exist?(unterminated_comment_fixture)
+  fixture = File.read(unterminated_comment_fixture)
+  unless fixture.include?('Unterminated block comment') && fixture.include?('/* missing close')
+    failures << "#{unterminated_comment_fixture} must document an unterminated block comment"
+  end
+else
+  failures << "#{unterminated_comment_fixture} is missing"
+end
+
 rakefile = File.read('Rakefile')
 failures << 'Rakefile must define do_test_pure' unless rakefile.include?("t.name = 'do_test_pure'")
 
@@ -53,6 +63,7 @@ if File.exist?('ARCHIVE_STATUS.md')
   failures << "ARCHIVE_STATUS.md must document version #{version}" unless archive_status.include?("Version: #{version}")
   failures << 'ARCHIVE_STATUS.md must document JSON=pure verification' unless archive_status.include?('JSON=pure')
   failures << 'ARCHIVE_STATUS.md must preserve security-relevant parser fixtures' unless archive_status.include?('security-relevant parser fixtures')
+  failures << 'ARCHIVE_STATUS.md must mention the unterminated block comment fixture' unless archive_status.include?('unterminated block comment')
 else
   failures << 'ARCHIVE_STATUS.md is missing'
 end

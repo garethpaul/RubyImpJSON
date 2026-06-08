@@ -2,6 +2,8 @@
 
 ## 2026-06-08
 
+- Added a malformed-input fixture for unterminated block comments and made the
+  archive metadata check preserve it.
 - Added `make check` as the shared repository verification alias.
 - Added a Bundler-free `make verify` gate for archive metadata and the pure-Ruby
   JSON test corpus.

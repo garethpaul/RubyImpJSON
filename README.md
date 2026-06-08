@@ -66,6 +66,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   extension compilation for the default local verification path.
 - The archive metadata check also requires completed canonical plans under
   `docs/plans`.
+- The fixture corpus includes malformed-input cases such as an unterminated
+  block comment, preserving parser rejection behavior for archived tests.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -87,6 +89,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - See `VISION.md` for project direction and contribution guardrails.
 - See `docs/plans/2026-06-08-rubyimpjson-baseline.md` for the canonical
   archive verification baseline.
+- See `docs/plans/2026-06-08-malformed-comment-fixture.md` for the malformed
+  comment fixture update.
 
 ## Contributing
 
