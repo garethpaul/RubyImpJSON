@@ -68,6 +68,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   `docs/plans`.
 - The fixture corpus includes malformed-input cases such as an unterminated
   block comment, preserving parser rejection behavior for archived tests.
+- The pure parser tests also cover accepted comment behavior, including `//`
+  line comments terminated by end-of-file.
 - The checked-in `json` and `json_pure` gemspec manifests are checked against
   the fixture corpus so packaged archives retain every parser fixture.
 
@@ -95,6 +97,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   comment fixture update.
 - See `docs/plans/2026-06-09-gemspec-fixture-manifest.md` for the fixture
   packaging manifest guard.
+- See `docs/plans/2026-06-09-eof-line-comment.md` for the pure parser EOF
+  line-comment compatibility guard.
 
 ## Contributing
 

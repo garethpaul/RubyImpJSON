@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Added pure parser coverage for `//` line comments at end-of-file and allowed
+  EOF to terminate those comments.
 - Added archive metadata checks that require the checked-in `json` and
   `json_pure` gemspec manifests to include every parser fixture.
 - Added the unterminated block comment fixture to both checked-in gemspec

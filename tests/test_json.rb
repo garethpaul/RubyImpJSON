@@ -372,6 +372,9 @@ EOT
     assert_equal(
       { "key1" => "value1", "key2" => "value2", "key3" => "value3" },
       parse(json))
+    assert_equal(
+      { "key1" => "value1" },
+      parse('{"key1":"value1"} // eof comment'))
     json = <<EOT
 {
   "key1":"value1"  /* multi line

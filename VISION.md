@@ -19,6 +19,7 @@ Priority:
 - Keep README and changelog context available
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
 - Preserve malformed-input fixtures such as unterminated block comments
+- Preserve accepted comment parsing behavior in the pure Ruby parser
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
 - Keep completed maintenance plans under `docs/plans`
 - Treat version 1.7.5 packaging as historical unless explicitly revived

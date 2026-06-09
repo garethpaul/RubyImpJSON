@@ -35,7 +35,7 @@ module JSON
       NULL                  = /null/
       IGNORE                = %r(
         (?:
-         //[^\n\r]*[\n\r]| # line comments
+         //[^\n\r]*(?:[\n\r]|\z)| # line comments
          /\*               # c-style comments
          (?:
           [^*/]|        # normal chars
