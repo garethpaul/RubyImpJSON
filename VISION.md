@@ -22,6 +22,7 @@ Priority:
 - Preserve accepted comment parsing behavior in the pure Ruby parser
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
 - Keep README archived-version notes aligned with the checked-in VERSION file
+- Keep README maintenance notes linked to every canonical plan
 - Keep completed maintenance plans under `docs/plans`
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 

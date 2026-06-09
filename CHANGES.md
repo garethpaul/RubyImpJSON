@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Added README plan-index validation so canonical archive maintenance plans
+  stay discoverable and stale plan links fail verification.
 - Added README archived-version coverage and metadata validation so public
   usage notes stay aligned with `VERSION`.
 - Added pure parser coverage for `//` line comments at end-of-file and allowed

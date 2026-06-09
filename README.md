@@ -75,6 +75,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   the fixture corpus so packaged archives retain every parser fixture.
 - The archive metadata check keeps the README archived version aligned with the
   checked-in `VERSION` file.
+- The archive metadata check keeps README maintenance links aligned with every
+  canonical plan under `docs/plans`.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -104,6 +106,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   line-comment compatibility guard.
 - See `docs/plans/2026-06-09-readme-version-guard.md` for the README archived
   version guard.
+- See `docs/plans/2026-06-09-readme-plan-index.md` for the README maintenance
+  plan index guard.
 
 ## Contributing
 

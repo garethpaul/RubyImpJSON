@@ -14,6 +14,7 @@ This repository is a historical snapshot, not an active JSON gem fork.
 - Malformed-input fixtures, including the unterminated block comment case
 - Pure parser comment behavior, including line comments terminated by EOF
 - Fixture entries in the checked-in `json` and `json_pure` gemspec manifests
+- README maintenance notes for every canonical `docs/plans` record
 
 ## Verification Baseline
 
@@ -28,6 +29,7 @@ The canonical maintenance baseline is recorded in
 
 - Keep behavior changes tied to fixtures or tests.
 - Keep gemspec fixture manifests aligned with the checked-in fixture corpus.
+- Keep README maintenance plan links aligned with `docs/plans`.
 - Do not remove native or JRuby artifacts without an archive rationale.
 - Do not claim modern gem support without a dedicated compatibility plan.
 - Preserve security-relevant parser fixtures for malformed JSON and encoding
