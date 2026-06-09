@@ -39,6 +39,15 @@ fixture_counts.each do |label, count|
   failures << "expected at least one #{label}" if count.zero?
 end
 
+fixture_paths = Dir['tests/fixtures/*.json'].sort
+%w[json.gemspec json_pure.gemspec].each do |gemspec|
+  source = File.read(gemspec)
+  missing_fixtures = fixture_paths.reject { |fixture| source.include?("\"#{fixture}\"") }
+  unless missing_fixtures.empty?
+    failures << "#{gemspec} must include fixture files: #{missing_fixtures.join(', ')}"
+  end
+end
+
 unterminated_comment_fixture = 'tests/fixtures/fail29.json'
 if File.exist?(unterminated_comment_fixture)
   fixture = File.read(unterminated_comment_fixture)

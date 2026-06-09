@@ -19,6 +19,7 @@ Priority:
 - Keep README and changelog context available
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
 - Preserve malformed-input fixtures such as unterminated block comments
+- Keep checked-in gemspec fixture manifests aligned with the fixture corpus
 - Keep completed maintenance plans under `docs/plans`
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 
@@ -50,6 +51,7 @@ avoid weakening validation without clear rationale.
 - Parser behavior changes without fixtures
 - Packaging claims that conflict with the archived version
 - Removal of security-relevant tests
+- Gemspec fixture manifests that omit checked-in parser fixtures
 - Broad modernization that obscures historical behavior
 
 This list is a roadmap guardrail, not a permanent rule.

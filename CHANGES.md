@@ -1,5 +1,12 @@
 # Changes
 
+## 2026-06-09
+
+- Added archive metadata checks that require the checked-in `json` and
+  `json_pure` gemspec manifests to include every parser fixture.
+- Added the unterminated block comment fixture to both checked-in gemspec
+  package file lists so archived package manifests preserve the test corpus.
+
 ## 2026-06-08
 
 - Added a malformed-input fixture for unterminated block comments and made the
