@@ -30,7 +30,7 @@ class Fuzzer
 
   def pick
     r = rand
-    found = @freqs.find { |k, f| f.include? rand }
+    found = @freqs.find { |k, f| f.include? r }
     found && found.first
   end
 

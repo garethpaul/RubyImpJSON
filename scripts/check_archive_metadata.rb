@@ -70,6 +70,14 @@ unless server.include?('def parse_port(value)') &&
   failures << 'tools/server.rb must validate and pass the parsed command-line port to create_server'
 end
 
+fuzzer = File.read('tools/fuzz.rb')
+unless fuzzer.include?('r = rand') && fuzzer.include?('f.include? r')
+  failures << 'tools/fuzz.rb must use the sampled random value when selecting frequency buckets'
+end
+if fuzzer.include?('f.include? rand')
+  failures << 'tools/fuzz.rb must not resample random values while selecting a frequency bucket'
+end
+
 readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')

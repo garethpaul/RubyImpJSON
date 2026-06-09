@@ -80,6 +80,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - The archive metadata check keeps the example WEBrick server wired to its
   parsed command-line port and validates that port arguments are integers in
   the TCP port range.
+- The archive metadata check keeps the example fuzzer's frequency bucket
+  selection tied to the sampled random value.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -115,6 +117,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   port argument guard.
 - See `docs/plans/2026-06-09-server-port-validation.md` for the example server
   port validation guard.
+- See `docs/plans/2026-06-09-fuzzer-frequency-sample.md` for the fuzzer
+  frequency-sample guard.
 
 ## Contributing
 

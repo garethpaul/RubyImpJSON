@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Fixed the archived fuzzer to use its sampled random value when selecting
+  frequency buckets, with archive metadata coverage.
 - Validated example WEBrick server port arguments before starting the server,
   with archive metadata coverage.
 - Added README plan-index validation so canonical archive maintenance plans
