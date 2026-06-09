@@ -5,7 +5,9 @@ failures = []
 
 docs_plans = Dir['docs/plans/*.md'].sort
 canonical_plan = 'docs/plans/2026-06-08-rubyimpjson-baseline.md'
+fuzzer_count_plan = 'docs/plans/2026-06-09-fuzzer-count-validation.md'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
+failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
 docs_plans.each do |plan_path|
@@ -76,6 +78,12 @@ unless fuzzer.include?('r = rand') && fuzzer.include?('f.include? r')
 end
 if fuzzer.include?('f.include? rand')
   failures << 'tools/fuzz.rb must not resample random values while selecting a frequency bucket'
+end
+unless fuzzer.include?('def parse_count(value)') &&
+       fuzzer.include?('Integer(value || 500)') &&
+       fuzzer.include?('count < 1') &&
+       fuzzer.include?('n = parse_count(ARGV.shift)')
+  failures << 'tools/fuzz.rb must validate positive integer fuzzer counts before generating payloads'
 end
 
 readme = File.read('README.md')

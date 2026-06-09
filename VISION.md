@@ -26,6 +26,7 @@ Priority:
 - Keep historical example tools wired to their documented arguments
 - Keep example server port arguments validated before startup
 - Keep fuzzer frequency selection tied to the sampled random value
+- Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 

@@ -38,6 +38,8 @@ For web services, APIs, sockets, or scraping workflows, prioritize reports invol
 
 The historical `tools/server.rb` WEBrick example should keep its port handling
 explicit so local test runs do not silently ignore caller-selected ports.
+The historical `tools/fuzz.rb` example should reject invalid count arguments
+before generating parser payloads.
 
 ## Dependency and Supply Chain Security
 

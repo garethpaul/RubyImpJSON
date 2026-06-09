@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Validated example fuzzer count arguments as positive integers before payload
+  generation, with archive metadata coverage.
 - Fixed the archived fuzzer to use its sampled random value when selecting
   frequency buckets, with archive metadata coverage.
 - Validated example WEBrick server port arguments before starting the server,

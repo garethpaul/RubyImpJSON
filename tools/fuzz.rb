@@ -103,7 +103,15 @@ class MyState < JSON.state
   end
 end
 
-n = (ARGV.shift || 500).to_i
+def parse_count(value)
+  count = Integer(value || 500)
+  abort "count must be a positive integer" if count < 1
+  count
+rescue ArgumentError
+  abort "count must be an integer"
+end
+
+n = parse_count(ARGV.shift)
 loop do
   fuzzer = Fuzzer.new(n,
                       Hash => 25,

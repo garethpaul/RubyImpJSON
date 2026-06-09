@@ -18,6 +18,7 @@ This repository is a historical snapshot, not an active JSON gem fork.
 - Example WEBrick server command-line port handling
 - Example WEBrick server port validation for integer TCP port arguments
 - Example fuzzer frequency selection tied to the sampled random value
+- Example fuzzer count validation for positive integer payload counts
 
 ## Verification Baseline
 
@@ -35,6 +36,7 @@ The canonical maintenance baseline is recorded in
 - Keep README maintenance plan links aligned with `docs/plans`.
 - Keep example tool behavior covered by metadata checks when it is touched.
 - Keep fuzzer changes tied to deterministic metadata checks or tests.
+- Keep example fuzzer arguments explicit before payload generation.
 - Do not remove native or JRuby artifacts without an archive rationale.
 - Do not claim modern gem support without a dedicated compatibility plan.
 - Preserve security-relevant parser fixtures for malformed JSON and encoding
