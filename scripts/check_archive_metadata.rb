@@ -61,6 +61,12 @@ end
 rakefile = File.read('Rakefile')
 failures << 'Rakefile must define do_test_pure' unless rakefile.include?("t.name = 'do_test_pure'")
 
+server = File.read('tools/server.rb')
+unless server.include?('port = (ARGV.shift || 6666).to_i') &&
+       server.include?('s = create_server(STDERR, dir, port)')
+  failures << 'tools/server.rb must pass the parsed command-line port to create_server'
+end
+
 readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')

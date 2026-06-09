@@ -52,7 +52,7 @@ end
 default_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data'))
 dir = ARGV.shift || default_dir
 port = (ARGV.shift || 6666).to_i
-s = create_server(STDERR, dir, 6666)
+s = create_server(STDERR, dir, port)
 t = Thread.new { s.start }
 trap(:INT) do
   s.shutdown

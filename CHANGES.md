@@ -4,6 +4,8 @@
 
 - Added README plan-index validation so canonical archive maintenance plans
   stay discoverable and stale plan links fail verification.
+- Fixed the example WEBrick server so the parsed command-line port is passed to
+  `create_server`, with archive metadata coverage.
 - Added README archived-version coverage and metadata validation so public
   usage notes stay aligned with `VERSION`.
 - Added pure parser coverage for `//` line comments at end-of-file and allowed
