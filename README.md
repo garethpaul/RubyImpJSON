@@ -56,6 +56,7 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 
 - Read `ARCHIVE_STATUS.md` before treating this repository as an active fork or
   supported gem release.
+- Archived version: 1.7.5, matching the checked-in `VERSION` file and gemspecs.
 - No single runtime entry point was identified. Start by reading the source files and manifests listed above.
 
 ## Testing and Verification
@@ -72,6 +73,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   line comments terminated by end-of-file.
 - The checked-in `json` and `json_pure` gemspec manifests are checked against
   the fixture corpus so packaged archives retain every parser fixture.
+- The archive metadata check keeps the README archived version aligned with the
+  checked-in `VERSION` file.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -99,6 +102,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   packaging manifest guard.
 - See `docs/plans/2026-06-09-eof-line-comment.md` for the pure parser EOF
   line-comment compatibility guard.
+- See `docs/plans/2026-06-09-readme-version-guard.md` for the README archived
+  version guard.
 
 ## Contributing
 

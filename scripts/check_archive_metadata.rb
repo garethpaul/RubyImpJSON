@@ -65,6 +65,7 @@ readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')
 failures << 'README.md must link ARCHIVE_STATUS.md' unless readme.include?('ARCHIVE_STATUS.md')
+failures << "README.md must document archived version #{version}" unless readme.include?("Archived version: #{version}")
 
 if File.exist?('ARCHIVE_STATUS.md')
   archive_status = File.read('ARCHIVE_STATUS.md')
