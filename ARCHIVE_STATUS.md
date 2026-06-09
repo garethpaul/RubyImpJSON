@@ -16,6 +16,7 @@ This repository is a historical snapshot, not an active JSON gem fork.
 - Fixture entries in the checked-in `json` and `json_pure` gemspec manifests
 - README maintenance notes for every canonical `docs/plans` record
 - Example WEBrick server command-line port handling
+- Example WEBrick server port validation for integer TCP port arguments
 
 ## Verification Baseline
 

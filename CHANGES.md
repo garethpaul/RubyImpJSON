@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Validated example WEBrick server port arguments before starting the server,
+  with archive metadata coverage.
 - Added README plan-index validation so canonical archive maintenance plans
   stay discoverable and stale plan links fail verification.
 - Fixed the example WEBrick server so the parsed command-line port is passed to

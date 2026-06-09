@@ -24,6 +24,7 @@ Priority:
 - Keep README archived-version notes aligned with the checked-in VERSION file
 - Keep README maintenance notes linked to every canonical plan
 - Keep historical example tools wired to their documented arguments
+- Keep example server port arguments validated before startup
 - Keep completed maintenance plans under `docs/plans`
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 

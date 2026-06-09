@@ -78,7 +78,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - The archive metadata check keeps README maintenance links aligned with every
   canonical plan under `docs/plans`.
 - The archive metadata check keeps the example WEBrick server wired to its
-  parsed command-line port.
+  parsed command-line port and validates that port arguments are integers in
+  the TCP port range.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -112,6 +113,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   plan index guard.
 - See `docs/plans/2026-06-09-server-port-argument.md` for the example server
   port argument guard.
+- See `docs/plans/2026-06-09-server-port-validation.md` for the example server
+  port validation guard.
 
 ## Contributing
 

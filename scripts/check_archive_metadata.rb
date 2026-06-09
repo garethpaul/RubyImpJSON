@@ -62,9 +62,12 @@ rakefile = File.read('Rakefile')
 failures << 'Rakefile must define do_test_pure' unless rakefile.include?("t.name = 'do_test_pure'")
 
 server = File.read('tools/server.rb')
-unless server.include?('port = (ARGV.shift || 6666).to_i') &&
+unless server.include?('def parse_port(value)') &&
+       server.include?('Integer(value || 6666)') &&
+       server.include?('port < 1 || port > 65535') &&
+       server.include?('port = parse_port(ARGV.shift)') &&
        server.include?('s = create_server(STDERR, dir, port)')
-  failures << 'tools/server.rb must pass the parsed command-line port to create_server'
+  failures << 'tools/server.rb must validate and pass the parsed command-line port to create_server'
 end
 
 readme = File.read('README.md')

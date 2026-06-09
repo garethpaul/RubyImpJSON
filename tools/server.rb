@@ -49,9 +49,17 @@ def create_server(err, dir, port)
   s
 end
 
+def parse_port(value)
+  port = Integer(value || 6666)
+  abort "port must be between 1 and 65535" if port < 1 || port > 65535
+  port
+rescue ArgumentError
+  abort "port must be an integer"
+end
+
 default_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data'))
 dir = ARGV.shift || default_dir
-port = (ARGV.shift || 6666).to_i
+port = parse_port(ARGV.shift)
 s = create_server(STDERR, dir, port)
 t = Thread.new { s.start }
 trap(:INT) do
