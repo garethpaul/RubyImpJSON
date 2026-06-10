@@ -88,6 +88,12 @@ else
   failures << "#{unterminated_comment_fixture} is missing"
 end
 
+fixture_test = File.read('tests/test_json_fixtures.rb')
+unless fixture_test.include?('File.basename(filename)') &&
+       fixture_test.include?("'/tmp/second-pass/fixtures/fail1.json'")
+  failures << 'tests/test_json_fixtures.rb must classify fixtures by basename, not parent paths'
+end
+
 rakefile = File.read('Rakefile')
 failures << 'Rakefile must define do_test_pure' unless rakefile.include?("t.name = 'do_test_pure'")
 

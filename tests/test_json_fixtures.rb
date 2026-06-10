@@ -5,11 +5,20 @@ require 'test/unit'
 require File.join(File.dirname(__FILE__), 'setup_variant')
 
 class TestJSONFixtures < Test::Unit::TestCase
+  def passing_fixture?(filename)
+    File.basename(filename) =~ /\Apass/
+  end
+
   def setup
     fixtures = File.join(File.dirname(__FILE__), 'fixtures/*.json')
-    passed, failed = Dir[fixtures].partition { |f| f['pass'] }
+    passed, failed = Dir[fixtures].partition { |f| passing_fixture?(f) }
     @passed = passed.inject([]) { |a, f| a << [ f, File.read(f) ] }.sort
     @failed = failed.inject([]) { |a, f| a << [ f, File.read(f) ] }.sort
+  end
+
+  def test_fixture_classification_ignores_parent_directories
+    assert passing_fixture?('/tmp/archive/fixtures/pass1.json')
+    assert !passing_fixture?('/tmp/second-pass/fixtures/fail1.json')
   end
 
   def test_passing

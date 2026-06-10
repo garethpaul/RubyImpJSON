@@ -12,6 +12,7 @@ This repository is a historical snapshot, not an active JSON gem fork.
 - JRuby-related Java sources and gemspec metadata
 - Parser, generator, encoding, additions, and fixture tests
 - Malformed-input fixtures, including the unterminated block comment case
+- Path-independent pass/fail fixture classification based on fixture basenames
 - Pure parser comment behavior, including line comments terminated by EOF
 - Fixture entries in the checked-in `json` and `json_pure` gemspec manifests
 - README maintenance notes for every canonical `docs/plans` record
