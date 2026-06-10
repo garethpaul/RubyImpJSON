@@ -6,8 +6,10 @@ failures = []
 docs_plans = Dir['docs/plans/*.md'].sort
 canonical_plan = 'docs/plans/2026-06-08-rubyimpjson-baseline.md'
 fuzzer_count_plan = 'docs/plans/2026-06-09-fuzzer-count-validation.md'
+local_server_plan = 'docs/plans/2026-06-10-local-server-loopback.md'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
+failures << "#{local_server_plan} is missing" unless File.exist?(local_server_plan)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
 docs_plans.each do |plan_path|
@@ -71,6 +73,23 @@ unless server.include?('def parse_port(value)') &&
        server.include?('s = create_server(STDERR, dir, port)')
   failures << 'tools/server.rb must validate and pass the parsed command-line port to create_server'
 end
+unless server.include?(":BindAddress  => '127.0.0.1'") &&
+       server.include?('"http://127.0.0.1:#{port}"') &&
+       server.include?('if $PROGRAM_NAME == __FILE__') &&
+       !server.include?('Socket.gethostname')
+  failures << 'tools/server.rb must keep the historical HTTP demo bound to loopback'
+end
+
+server_test = 'tests/test_server.rb'
+if File.exist?(server_test)
+  server_test_source = File.read(server_test)
+  unless server_test_source.include?("server.config[:BindAddress] == '127.0.0.1'") &&
+         server_test_source.include?("server.listeners.first.addr[3] == '127.0.0.1'")
+    failures << "#{server_test} must verify the configured and listening loopback addresses"
+  end
+else
+  failures << "#{server_test} is missing"
+end
 
 fuzzer = File.read('tools/fuzz.rb')
 unless fuzzer.include?('r = rand') && fuzzer.include?('f.include? r')
@@ -91,6 +110,8 @@ failures << 'README.md must document make verify' unless readme.include?('make v
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')
 failures << 'README.md must link ARCHIVE_STATUS.md' unless readme.include?('ARCHIVE_STATUS.md')
 failures << "README.md must document archived version #{version}" unless readme.include?("Archived version: #{version}")
+failures << 'README.md must document the local-only HTTP example server' unless readme.include?('local-only HTTP')
+failures << 'README.md must clarify parseQuery/parseObject are not Parse SDK integrations' unless readme.include?('not Parse SDK')
 docs_plans.each do |plan_path|
   failures << "README.md must reference #{plan_path}" unless readme.include?(plan_path)
 end
@@ -105,9 +126,14 @@ if File.exist?('ARCHIVE_STATUS.md')
   failures << 'ARCHIVE_STATUS.md must document JSON=pure verification' unless archive_status.include?('JSON=pure')
   failures << 'ARCHIVE_STATUS.md must preserve security-relevant parser fixtures' unless archive_status.include?('security-relevant parser fixtures')
   failures << 'ARCHIVE_STATUS.md must mention the unterminated block comment fixture' unless archive_status.include?('unterminated block comment')
+  failures << 'ARCHIVE_STATUS.md must document local-only HTTP server scope' unless archive_status.include?('local-only HTTP')
 else
   failures << 'ARCHIVE_STATUS.md is missing'
 end
+
+security = File.read('SECURITY.md')
+failures << 'SECURITY.md must document local-only HTTP server scope' unless security.include?('local-only HTTP')
+failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK integrations' unless security.include?('not Parse SDK')
 
 if failures.empty?
   puts 'Archive metadata checks passed'
