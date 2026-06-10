@@ -47,6 +47,10 @@ parser/prototype helper names, not Parse SDK or backend integrations.
 
 ## Dependency and Supply Chain Security
 
+Hosted archive validation installs no project dependencies, grants only read
+access to repository contents, and pins both the Ruby image and checkout action
+immutably.
+
 Dependency updates should come from trusted package managers and should keep lockfiles in sync when lockfiles exist. Do not commit credentials, private keys, tokens, generated secrets, or machine-local configuration. If a vulnerability depends on a compromised package, typosquatting risk, insecure transitive dependency, or unsafe build step, include the package name, affected version, and the path through which it is used.
 
 ## Safe Research Guidelines

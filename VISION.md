@@ -29,6 +29,7 @@ Priority:
 - Keep fuzzer frequency selection tied to the sampled random value
 - Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`
+- Keep the full pure Ruby archive suite enforced in pinned hosted validation
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 
 Next priorities:

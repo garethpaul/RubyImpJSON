@@ -30,6 +30,10 @@ archived pure Ruby implementation is exercised consistently.
 The canonical maintenance baseline is recorded in
 `docs/plans/2026-06-08-rubyimpjson-baseline.md`.
 
+GitHub Actions runs this pure archive boundary in a digest-pinned Ruby 2.7
+container. Ruby 3.4 does not include the historical WEBrick standard-library
+dependency used by the optional local server example.
+
 ## Change Policy
 
 - Keep behavior changes tied to fixtures or tests.

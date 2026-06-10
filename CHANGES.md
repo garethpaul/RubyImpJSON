@@ -6,6 +6,10 @@
   a local-only HTTP archive demo.
 - Clarified that Prototype `parseQuery` and Java `parseObject` references are
   parser/prototype helpers, not Parse SDK/backend integrations.
+- Added dependency-free hosted validation for all 62 pure Ruby archive tests in
+  a digest-pinned Ruby 2.7 container.
+- Made the Makefile and archive checker independent of the caller's directory.
+- Added fail-closed checks for the hosted runtime and immutable action pin.
 
 ## 2026-06-09
 
