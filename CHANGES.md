@@ -10,6 +10,8 @@
   successful gem builds, and the explicit non-production package policy.
 - Added a dependency-free gem package build contract for all three archived
   gemspecs with metadata, payload, archive-path, and artifact-cleanup checks.
+- Declared the preserved Ruby or GPL-2.0-only package metadata, included both
+  JRuby license texts, and bounded the `permutation` development dependency.
 
 ## 2026-06-10
 

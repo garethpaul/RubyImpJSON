@@ -67,7 +67,9 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   extension compilation for the default local verification path.
 - `make build` runs the dependency-free gem package build contract for the
   native, pure-Ruby, and Java gemspecs in a temporary directory, checks package
-  metadata and representative payloads, and leaves no `.gem` artifacts.
+  metadata and representative payloads, and leaves no `.gem` artifacts. The
+  contract verifies Ruby or GPL-2.0-only license and dependency metadata,
+  including the bounded `permutation ~> 0.1` development requirement.
 - GitHub Actions runs the full pure archive gate in an official Ruby
   2.7 image pinned by digest, without installing project dependencies.
 - The archive metadata check also requires completed canonical plans under
@@ -149,6 +151,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   package advisory, gem build, and non-production policy review.
 - See `docs/plans/2026-06-12-gem-package-build-contract.md` for the temporary
   gem package build contract and archive-entry checks.
+- See `docs/plans/2026-06-12-gem-license-dependency-metadata.md` for preserved
+  dual-license declarations, bounded development resolution, and warning checks.
 
 ## Contributing
 
