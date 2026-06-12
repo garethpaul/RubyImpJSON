@@ -38,8 +38,12 @@ For web services, APIs, sockets, or scraping workflows, prioritize reports invol
 
 The historical `tools/server.rb` WEBrick example should keep its port handling
 explicit so local test runs do not silently ignore caller-selected ports.
+It is a local-only HTTP archive demo and should stay bound to loopback unless a
+dedicated service design is added.
 The historical `tools/fuzz.rb` example should reject invalid count arguments
 before generating parser payloads.
+Prototype `parseQuery` and Java `parseObject` references are historical
+parser/prototype helper names, not Parse SDK or backend integrations.
 
 ## Dependency and Supply Chain Security
 

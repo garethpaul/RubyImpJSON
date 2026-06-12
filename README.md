@@ -80,6 +80,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - The archive metadata check keeps the example WEBrick server wired to its
   parsed command-line port and validates that port arguments are integers in
   the TCP port range.
+- The example WEBrick server is a local-only HTTP archive demo bound to
+  `127.0.0.1`; it is not a production network integration.
 - The archive metadata check keeps the example fuzzer's frequency bucket
   selection tied to the sampled random value.
 - The archive metadata check keeps the example fuzzer count argument validated
@@ -97,6 +99,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Review changes touching network requests, sockets, or service endpoints; examples from the scan include .travis.yml, data/index.html, data/prototype.js, lib/json.rb, and 2 more.
 - Review changes touching file, media, JSON, XML, CSV, OCR, or data parsing; examples from the scan include Gemfile, data/index.html, data/prototype.js, ext/json/ext/generator/extconf.rb, and 6 more.
 - Review changes touching shell execution, subprocess, or dynamic evaluation; examples from the scan include data/prototype.js, tests/test_json.rb.
+- Prototype `parseQuery` and Java `parseObject` names in this archive are
+  parser/prototype helpers, not Parse SDK or backend integrations.
 
 ## Maintenance Notes
 
@@ -123,6 +127,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   frequency-sample guard.
 - See `docs/plans/2026-06-09-fuzzer-count-validation.md` for the fuzzer count
   argument validation guard.
+- See `docs/plans/2026-06-10-local-server-loopback.md` for the local-only HTTP
+  example server guard.
 
 ## Contributing
 

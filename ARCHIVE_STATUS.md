@@ -17,6 +17,7 @@ This repository is a historical snapshot, not an active JSON gem fork.
 - README maintenance notes for every canonical `docs/plans` record
 - Example WEBrick server command-line port handling
 - Example WEBrick server port validation for integer TCP port arguments
+- Example WEBrick server local-only HTTP loopback binding
 - Example fuzzer frequency selection tied to the sampled random value
 - Example fuzzer count validation for positive integer payload counts
 
@@ -35,6 +36,8 @@ The canonical maintenance baseline is recorded in
 - Keep gemspec fixture manifests aligned with the checked-in fixture corpus.
 - Keep README maintenance plan links aligned with `docs/plans`.
 - Keep example tool behavior covered by metadata checks when it is touched.
+- Keep the example WEBrick server bound to loopback unless a dedicated service
+  revival plan exists.
 - Keep fuzzer changes tied to deterministic metadata checks or tests.
 - Keep example fuzzer arguments explicit before payload generation.
 - Do not remove native or JRuby artifacts without an archive rationale.

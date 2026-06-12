@@ -1,5 +1,12 @@
 # Changes
 
+## 2026-06-10
+
+- Bound the historical WEBrick example server to loopback and documented it as
+  a local-only HTTP archive demo.
+- Clarified that Prototype `parseQuery` and Java `parseObject` references are
+  parser/prototype helpers, not Parse SDK/backend integrations.
+
 ## 2026-06-09
 
 - Validated example fuzzer count arguments as positive integers before payload

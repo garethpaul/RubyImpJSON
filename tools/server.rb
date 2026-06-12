@@ -33,10 +33,11 @@ end
 
 def create_server(err, dir, port)
   dir = File.expand_path(dir)
-  err.puts "Surf to:", "http://#{Socket.gethostname}:#{port}"
+  err.puts "Local JSON demo:", "http://127.0.0.1:#{port}"
 
   s = HTTPServer.new(
     :Port         => port,
+    :BindAddress  => '127.0.0.1',
     :DocumentRoot => dir,
     :Logger       => WEBrick::Log.new(err),
     :AccessLog    => [

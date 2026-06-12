@@ -25,6 +25,7 @@ Priority:
 - Keep README maintenance notes linked to every canonical plan
 - Keep historical example tools wired to their documented arguments
 - Keep example server port arguments validated before startup
+- Keep the historical WEBrick HTTP example bound to loopback
 - Keep fuzzer frequency selection tied to the sampled random value
 - Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`
@@ -52,6 +53,8 @@ Canonical security policy and reporting:
 JSON parsers handle untrusted input. Changes should preserve tests for malformed
 documents, encoding edge cases, nesting, and resource-heavy payloads, and should
 avoid weakening validation without clear rationale.
+Prototype `parseQuery` and Java `parseObject` names are historical
+parser/prototype helpers, not Parse SDK or backend integrations.
 
 ## What We Will Not Merge (For Now)
 
