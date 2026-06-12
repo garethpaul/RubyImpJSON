@@ -1,5 +1,16 @@
 # Changes
 
+## 2026-06-12
+
+- Added an executable `/json` response test for the loopback-only WEBrick demo,
+  including status, content type, counter, timestamp, and Unicode payload checks.
+- Hardened hosted validation with credential-free checkout, exact release
+  pinning, strict action/permission/trigger contracts, and all-branch push runs.
+- Recorded CVE-2013-0269 and CVE-2020-10663 against archived `json` 1.7.5,
+  successful gem builds, and the explicit non-production package policy.
+- Added a dependency-free gem package build contract for all three archived
+  gemspecs with metadata, payload, archive-path, and artifact-cleanup checks.
+
 ## 2026-06-10
 
 - Bound the historical WEBrick example server to loopback and documented it as

@@ -11,11 +11,15 @@ canonical_plan = 'docs/plans/2026-06-08-rubyimpjson-baseline.md'
 fuzzer_count_plan = 'docs/plans/2026-06-09-fuzzer-count-validation.md'
 local_server_plan = 'docs/plans/2026-06-10-local-server-loopback.md'
 hosted_validation_plan = 'docs/plans/2026-06-10-hosted-archive-validation.md'
+vulnerability_review_plan = 'docs/plans/2026-06-12-archive-vulnerability-review.md'
+gem_build_plan = 'docs/plans/2026-06-12-gem-package-build-contract.md'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
 failures << "#{local_server_plan} is missing" unless File.exist?(local_server_plan)
 failures << "#{hosted_validation_plan} is missing" unless File.exist?(hosted_validation_plan)
+failures << "#{vulnerability_review_plan} is missing" unless File.exist?(vulnerability_review_plan)
+failures << "#{gem_build_plan} is missing" unless File.exist?(gem_build_plan)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
@@ -33,15 +37,43 @@ if File.exist?(hosted_validation_workflow)
     'permissions:',
     'contents: read',
     'ruby:2.7@sha256:2347de892e419c7160fc21dec721d5952736909f8c3fbb7f84cb4a07aaf9ce7d',
-    'uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10',
+    'uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0',
+    'persist-credentials: false',
+    'timeout-minutes: 10',
+    'cancel-in-progress: true',
     'run: make check'
   ].each do |fragment|
     failures << "#{hosted_validation_workflow} must include #{fragment.inspect}" unless workflow.include?(fragment)
   end
-  workflow.scan(/^\s*uses:\s*([^@\s]+)@([^\s#]+)/).each do |action, revision|
+  actions = workflow.scan(/^\s*(?:-\s*)?uses:\s*([^@\s]+)@([^\s#]+)/)
+  expected_actions = [
+    ['actions/checkout', '9f698171ed81b15d1823a05fc7211befd50c8ae0']
+  ]
+  failures << "#{hosted_validation_workflow} must use only the approved checkout action" unless actions == expected_actions
+
+  actions.each do |action, revision|
     unless revision.match?(/\A[a-f0-9]{40}\z/)
       failures << "#{hosted_validation_workflow} action #{action} must be pinned to a full commit SHA"
     end
+  end
+  unless workflow.scan(/^permissions:$/).length == 1 &&
+         !workflow.match?(/^\s+[A-Za-z0-9_-]+:\s*write\s*$/)
+    failures << "#{hosted_validation_workflow} must keep exactly one read-only permissions block"
+  end
+  unless workflow.scan(/persist-credentials:\s*false/).length == 1
+    failures << "#{hosted_validation_workflow} must disable persisted checkout credentials exactly once"
+  end
+  %w[push: pull_request: workflow_dispatch:].each do |trigger|
+    failures << "#{hosted_validation_workflow} must include #{trigger}" unless workflow.match?(/^  #{Regexp.escape(trigger)}$/)
+  end
+  if workflow.include?('pull_request_target:')
+    failures << "#{hosted_validation_workflow} must not use pull_request_target"
+  end
+  if workflow.match?(/^\s+branches:/)
+    failures << "#{hosted_validation_workflow} must run push validation on every branch"
+  end
+  if workflow.match?(/\b(?:bundle|gem)\s+(?:install|update)\b/)
+    failures << "#{hosted_validation_workflow} must keep archive validation dependency-free"
   end
 end
 
@@ -116,8 +148,10 @@ server_test = 'tests/test_server.rb'
 if File.exist?(server_test)
   server_test_source = File.read(server_test)
   unless server_test_source.include?("server.config[:BindAddress] == '127.0.0.1'") &&
-         server_test_source.include?("server.listeners.first.addr[3] == '127.0.0.1'")
-    failures << "#{server_test} must verify the configured and listening loopback addresses"
+         server_test_source.include?("server.listeners.first.addr[3] == '127.0.0.1'") &&
+         server_test_source.include?("http.get('/json')") &&
+         server_test_source.include?("JSON.parse(response.body)")
+    failures << "#{server_test} must verify loopback binding and the JSON endpoint response"
   end
 else
   failures << "#{server_test} is missing"
@@ -137,6 +171,33 @@ unless fuzzer.include?('def parse_count(value)') &&
   failures << 'tools/fuzz.rb must validate positive integer fuzzer counts before generating payloads'
 end
 
+gem_build_test = 'scripts/test_gem_builds.rb'
+if File.exist?(gem_build_test)
+  gem_build_source = File.read(gem_build_test)
+  [
+    "'json.gemspec'",
+    "'json_pure.gemspec'",
+    "'json-java.gemspec'",
+    ["require 'rubygems/", "package'"].join,
+    "entry.include?('\\\\')",
+    ["components.include?('", ".')"].join,
+    ["components.include?('", "..')"].join,
+    ['path.cleanpath.to_s ', '!= entry'].join,
+    'canonical manifest paths without ./ aliases',
+    ['repository_gems_after == ', 'repository_gems_before'].join,
+    'Gem package build tests passed'
+  ].each do |fragment|
+    failures << "#{gem_build_test} must include #{fragment.inspect}" unless gem_build_source.include?(fragment)
+  end
+else
+  failures << "#{gem_build_test} is missing"
+end
+
+makefile = File.read('Makefile')
+unless makefile.include?('cd "$(ROOT)" && $(RUBY) scripts/test_gem_builds.rb')
+  failures << 'Makefile build must run the gem package build contract from ROOT'
+end
+
 readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')
@@ -144,6 +205,7 @@ failures << 'README.md must link ARCHIVE_STATUS.md' unless readme.include?('ARCH
 failures << "README.md must document archived version #{version}" unless readme.include?("Archived version: #{version}")
 failures << 'README.md must document the local-only HTTP example server' unless readme.include?('local-only HTTP')
 failures << 'README.md must clarify parseQuery/parseObject are not Parse SDK integrations' unless readme.include?('not Parse SDK')
+failures << 'README.md must document the gem package build contract' unless readme.include?('gem package build contract')
 docs_plans.each do |plan_path|
   failures << "README.md must reference #{plan_path}" unless readme.include?(plan_path)
 end
@@ -151,6 +213,7 @@ readme.scan(%r{docs/plans/[-\w.]+\.md}).each do |plan_path|
   failures << "README.md references missing plan #{plan_path}" unless File.exist?(plan_path)
 end
 
+archive_status = ''
 if File.exist?('ARCHIVE_STATUS.md')
   archive_status = File.read('ARCHIVE_STATUS.md')
   failures << 'ARCHIVE_STATUS.md must declare historical snapshot status' unless archive_status.include?('historical snapshot')
@@ -166,6 +229,27 @@ end
 security = File.read('SECURITY.md')
 failures << 'SECURITY.md must document local-only HTTP server scope' unless security.include?('local-only HTTP')
 failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK integrations' unless security.include?('not Parse SDK')
+
+[readme, archive_status, security, File.read('VISION.md'), File.read('CHANGES.md')].each_with_index do |document, index|
+  failures << "archive document #{index + 1} must mention the gem package build contract" unless document.include?('gem package build contract')
+end
+
+archive_risk_docs = [readme, archive_status, security, File.read('VISION.md')]
+%w[CVE-2013-0269 CVE-2020-10663].each do |advisory|
+  unless archive_risk_docs.all? { |document| document.include?(advisory) }
+    failures << "archive risk documentation must mention #{advisory}"
+  end
+end
+
+if File.exist?(vulnerability_review_plan)
+  review = File.read(vulnerability_review_plan)
+  unless review.include?('json_pure') &&
+         review.include?('gem build json.gemspec') &&
+         review.include?('gem build json_pure.gemspec') &&
+         review.include?('Do not deploy')
+    failures << "#{vulnerability_review_plan} must record package queries, builds, and non-production policy"
+  end
+end
 
 if failures.empty?
   puts 'Archive metadata checks passed'

@@ -28,4 +28,42 @@ RUBY
 
     assert_predicate status, :success?, stderr
   end
+
+  def test_json_endpoint_serves_a_valid_local_payload
+    script = <<'RUBY'
+require 'json'
+require 'net/http'
+require 'stringio'
+require './tools/server'
+
+server = create_server(StringIO.new, File.expand_path('data'), 0)
+thread = Thread.new { server.start }
+begin
+  port = server.listeners.first.addr[1]
+  http = Net::HTTP.new('127.0.0.1', port, nil)
+  response = http.get('/json')
+  raise "unexpected status #{response.code}" unless response.code == '200'
+  raise 'unexpected content type' unless response['Content-Type'].start_with?('application/json')
+
+  payload = JSON.parse(response.body)
+  raise 'missing timestamp' unless payload['TIME'].is_a?(String)
+  raise 'missing counter' unless payload['COUNT'].is_a?(Integer)
+  raise 'unicode payload changed' unless payload['foo'] == 'Bär' && payload['g'] == '松本行弘'
+ensure
+  server.shutdown
+  thread.join
+end
+RUBY
+
+    _stdout, stderr, status = Open3.capture3(
+      { 'JSON' => 'pure' },
+      RbConfig.ruby,
+      '-Ilib',
+      '-e',
+      script,
+      :chdir => File.expand_path('..', __dir__)
+    )
+
+    assert_predicate status, :success?, stderr
+  end
 end
