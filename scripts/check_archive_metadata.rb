@@ -13,6 +13,7 @@ local_server_plan = 'docs/plans/2026-06-10-local-server-loopback.md'
 hosted_validation_plan = 'docs/plans/2026-06-10-hosted-archive-validation.md'
 vulnerability_review_plan = 'docs/plans/2026-06-12-archive-vulnerability-review.md'
 gem_build_plan = 'docs/plans/2026-06-12-gem-package-build-contract.md'
+gem_metadata_plan = 'docs/plans/2026-06-12-gem-license-dependency-metadata.md'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
@@ -20,6 +21,7 @@ failures << "#{local_server_plan} is missing" unless File.exist?(local_server_pl
 failures << "#{hosted_validation_plan} is missing" unless File.exist?(hosted_validation_plan)
 failures << "#{vulnerability_review_plan} is missing" unless File.exist?(vulnerability_review_plan)
 failures << "#{gem_build_plan} is missing" unless File.exist?(gem_build_plan)
+failures << "#{gem_metadata_plan} is missing" unless File.exist?(gem_metadata_plan)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
@@ -184,6 +186,11 @@ if File.exist?(gem_build_test)
     ["components.include?('", "..')"].join,
     ['path.cleanpath.to_s ', '!= entry'].join,
     'canonical manifest paths without ./ aliases',
+    "'GPL-2.0-only', 'Ruby'",
+    "'open-ended dependency on permutation'",
+    "permutation.requirement.to_s == expected[:permutation]",
+    'Rakefile gemspec generators must preserve dual-license metadata',
+    'Rakefile gemspec generators must preserve bounded permutation metadata',
     ['repository_gems_after == ', 'repository_gems_before'].join,
     'Gem package build tests passed'
   ].each do |fragment|
@@ -191,6 +198,32 @@ if File.exist?(gem_build_test)
   end
 else
   failures << "#{gem_build_test} is missing"
+end
+
+%w[json.gemspec json_pure.gemspec json-java.gemspec].each do |gemspec|
+  source = File.read(gemspec)
+  unless source.include?('s.licenses = ["Ruby", "GPL-2.0-only"]')
+    failures << "#{gemspec} must declare the preserved Ruby or GPL-2.0-only license boundary"
+  end
+end
+
+%w[json.gemspec json_pure.gemspec].each do |gemspec|
+  source = File.read(gemspec)
+  failures << "#{gemspec} must bound permutation to ~> 0.1" unless source.scan('["~> 0.1"]').length == 3
+  failures << "#{gemspec} must not retain open-ended permutation requirements" if source.include?('permutation>, [">= 0"]')
+end
+
+java_gemspec = File.read('json-java.gemspec')
+unless java_gemspec.include?('["COPYING-json-jruby", "GPL"]')
+  failures << 'json-java.gemspec must package both preserved license texts'
+end
+
+rakefile_source = File.read('Rakefile')
+unless rakefile_source.scan("s.licenses = ['Ruby', 'GPL-2.0-only']").length == 2
+  failures << 'Rakefile gemspec generators must declare the preserved dual-license metadata'
+end
+unless rakefile_source.scan("s.add_development_dependency 'permutation', '~> 0.1'").length == 2
+  failures << 'Rakefile gemspec generators must bound permutation to ~> 0.1'
 end
 
 makefile = File.read('Makefile')
@@ -206,6 +239,7 @@ failures << "README.md must document archived version #{version}" unless readme.
 failures << 'README.md must document the local-only HTTP example server' unless readme.include?('local-only HTTP')
 failures << 'README.md must clarify parseQuery/parseObject are not Parse SDK integrations' unless readme.include?('not Parse SDK')
 failures << 'README.md must document the gem package build contract' unless readme.include?('gem package build contract')
+failures << 'README.md must document gem license and dependency metadata checks' unless readme.include?('license and dependency metadata')
 docs_plans.each do |plan_path|
   failures << "README.md must reference #{plan_path}" unless readme.include?(plan_path)
 end
@@ -222,6 +256,7 @@ if File.exist?('ARCHIVE_STATUS.md')
   failures << 'ARCHIVE_STATUS.md must preserve security-relevant parser fixtures' unless archive_status.include?('security-relevant parser fixtures')
   failures << 'ARCHIVE_STATUS.md must mention the unterminated block comment fixture' unless archive_status.include?('unterminated block comment')
   failures << 'ARCHIVE_STATUS.md must document local-only HTTP server scope' unless archive_status.include?('local-only HTTP')
+  failures << 'ARCHIVE_STATUS.md must document bounded permutation metadata' unless archive_status.include?('permutation ~> 0.1')
 else
   failures << 'ARCHIVE_STATUS.md is missing'
 end
@@ -232,6 +267,7 @@ failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK i
 
 [readme, archive_status, security, File.read('VISION.md'), File.read('CHANGES.md')].each_with_index do |document, index|
   failures << "archive document #{index + 1} must mention the gem package build contract" unless document.include?('gem package build contract')
+  failures << "archive document #{index + 1} must mention the dual-license metadata" unless document.include?('Ruby or GPL-2.0-only')
 end
 
 archive_risk_docs = [readme, archive_status, security, File.read('VISION.md')]

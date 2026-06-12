@@ -83,11 +83,12 @@ if defined?(Gem) and defined?(Gem::PackageTask)
     s.version = PKG_VERSION
     s.summary = PKG_TITLE
     s.description = "This is a JSON implementation in pure Ruby."
+    s.licenses = ['Ruby', 'GPL-2.0-only']
 
     s.files = PKG_FILES
 
     s.require_path = 'lib'
-    s.add_development_dependency 'permutation'
+    s.add_development_dependency 'permutation', '~> 0.1'
     s.add_development_dependency 'sdoc', '~> 0.3.16'
     s.add_development_dependency 'rake', '~>0.9.2'
 
@@ -119,13 +120,14 @@ if defined?(Gem) and defined?(Gem::PackageTask)
     s.version = PKG_VERSION
     s.summary = PKG_TITLE
     s.description = "This is a JSON implementation as a Ruby extension in C."
+    s.licenses = ['Ruby', 'GPL-2.0-only']
 
     s.files = PKG_FILES
 
     s.extensions = FileList['ext/**/extconf.rb']
 
     s.require_path = 'lib'
-    s.add_development_dependency 'permutation'
+    s.add_development_dependency 'permutation', '~> 0.1'
     s.add_development_dependency 'sdoc', '~> 0.3.16'
 
     s.extra_rdoc_files << 'README.rdoc'

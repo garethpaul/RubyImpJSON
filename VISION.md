@@ -25,6 +25,8 @@ Priority:
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
 - Keep the native, pure-Ruby, and Java gem package build contract temporary,
   path-safe, and artifact-free
+- Keep Ruby or GPL-2.0-only package metadata aligned with preserved license
+  texts and keep the historical `permutation` development range bounded
 - Keep README archived-version notes aligned with the checked-in VERSION file
 - Keep README maintenance notes linked to every canonical plan
 - Keep historical example tools wired to their documented arguments

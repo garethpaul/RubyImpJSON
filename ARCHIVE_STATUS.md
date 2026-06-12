@@ -27,6 +27,8 @@ deploy or newly depend on this snapshot.
 - Example fuzzer count validation for positive integer payload counts
 - Temporary native, pure-Ruby, and Java gem package build contract with
   metadata, representative payload, archive-path, and artifact-cleanup checks
+- Ruby or GPL-2.0-only package metadata, packaged license texts, and a bounded
+  `permutation ~> 0.1` development dependency for the native and pure gems
 
 ## Verification Baseline
 

@@ -15,6 +15,8 @@ PACKAGES = [
     :output => 'json-native.gem',
     :name => 'json',
     :platform => 'ruby',
+    :licenses => ['GPL-2.0-only', 'Ruby'],
+    :permutation => '~> 0.1',
     :required => ['lib/json.rb', 'tests/fixtures/fail29.json', 'ext/json/ext/parser/parser.c']
   },
   {
@@ -22,6 +24,8 @@ PACKAGES = [
     :output => 'json-pure.gem',
     :name => 'json_pure',
     :platform => 'ruby',
+    :licenses => ['GPL-2.0-only', 'Ruby'],
+    :permutation => '~> 0.1',
     :required => ['lib/json.rb', 'lib/json/pure/parser.rb', 'tests/fixtures/fail29.json']
   },
   {
@@ -29,7 +33,9 @@ PACKAGES = [
     :output => 'json-java.gem',
     :name => 'json',
     :platform => 'java',
-    :required => ['lib/json.rb', 'lib/json/ext.rb', 'tests/fixtures/fail29.json']
+    :licenses => ['GPL-2.0-only', 'Ruby'],
+    :permutation => nil,
+    :required => ['lib/json.rb', 'lib/json/ext.rb', 'tests/fixtures/fail29.json', 'COPYING-json-jruby', 'GPL']
   }
 ].freeze
 
@@ -59,7 +65,16 @@ def validate_gemspec_source(gemspec)
   end
 end
 
+def validate_generator_source
+  source = ROOT.join('Rakefile').read
+  licenses = "s.licenses = ['Ruby', 'GPL-2.0-only']"
+  permutation = "s.add_development_dependency 'permutation', '~> 0.1'"
+  abort 'Rakefile gemspec generators must preserve dual-license metadata' unless source.scan(licenses).length == 2
+  abort 'Rakefile gemspec generators must preserve bounded permutation metadata' unless source.scan(permutation).length == 2
+end
+
 repository_gems_before = Dir[ROOT.join('*.gem').to_s].sort
+validate_generator_source
 
 Dir.mktmpdir('rubyimpjson-gems') do |directory|
   PACKAGES.each do |expected|
@@ -76,6 +91,10 @@ Dir.mktmpdir('rubyimpjson-gems') do |directory|
       :chdir => ROOT.to_s
     )
     abort "#{expected[:gemspec]} build failed:\n#{stdout}#{stderr}" unless status.success?
+    build_output = stdout + stderr
+    ['licenses is empty', 'open-ended dependency on permutation'].each do |warning|
+      abort "#{expected[:gemspec]} build emitted remediated warning #{warning.inspect}" if build_output.include?(warning)
+    end
     abort "#{expected[:gemspec]} did not create #{output}" unless File.file?(output)
 
     package = Gem::Package.new(output)
@@ -83,6 +102,16 @@ Dir.mktmpdir('rubyimpjson-gems') do |directory|
     abort "#{expected[:gemspec]} built unexpected name #{specification.name}" unless specification.name == expected[:name]
     abort "#{expected[:gemspec]} built unexpected version #{specification.version}" unless specification.version.to_s == VERSION
     abort "#{expected[:gemspec]} built unexpected platform #{specification.platform}" unless specification.platform.to_s == expected[:platform]
+    abort "#{expected[:gemspec]} built unexpected licenses #{specification.licenses.inspect}" unless specification.licenses.sort == expected[:licenses]
+
+    permutation = specification.dependencies.find { |dependency| dependency.name == 'permutation' }
+    if expected[:permutation]
+      unless permutation && permutation.type == :development && permutation.requirement.to_s == expected[:permutation]
+        abort "#{expected[:gemspec]} must retain bounded development dependency permutation #{expected[:permutation]}"
+      end
+    elsif permutation
+      abort "#{expected[:gemspec]} must not add a permutation dependency"
+    end
 
     validate_contents(expected[:gemspec], package.contents, expected[:required])
   end

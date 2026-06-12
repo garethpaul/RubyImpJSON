@@ -58,7 +58,9 @@ access to repository contents, and pins both the Ruby image and checkout action
 immutably. Checkout credentials are not persisted after source retrieval.
 The gem package build contract writes only to a temporary directory, rejects
 unsafe archive paths, and verifies that no `.gem` artifact is left in the
-repository. It is packaging validation, not a publication or support claim.
+repository. It also verifies the preserved Ruby or GPL-2.0-only metadata and
+the bounded `permutation ~> 0.1` development requirement. It is packaging
+validation, not a publication or support claim.
 
 Dependency updates should come from trusted package managers and should keep lockfiles in sync when lockfiles exist. Do not commit credentials, private keys, tokens, generated secrets, or machine-local configuration. If a vulnerability depends on a compromised package, typosquatting risk, insecure transitive dependency, or unsafe build step, include the package name, affected version, and the path through which it is used.
 
