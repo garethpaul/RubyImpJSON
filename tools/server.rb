@@ -58,14 +58,16 @@ rescue ArgumentError
   abort "port must be an integer"
 end
 
-default_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data'))
-dir = ARGV.shift || default_dir
-port = parse_port(ARGV.shift)
-s = create_server(STDERR, dir, port)
-t = Thread.new { s.start }
-trap(:INT) do
-  s.shutdown
-  t.join
-  exit
+if $PROGRAM_NAME == __FILE__
+  default_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data'))
+  dir = ARGV.shift || default_dir
+  port = parse_port(ARGV.shift)
+  s = create_server(STDERR, dir, port)
+  t = Thread.new { s.start }
+  trap(:INT) do
+    s.shutdown
+    t.join
+    exit
+  end
+  sleep
 end
-sleep

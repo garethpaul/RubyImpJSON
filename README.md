@@ -65,10 +65,14 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - `make check` delegates to `make verify`, which runs archive metadata checks
   and the pure-Ruby test corpus with `JSON=pure`, avoiding Bundler and native
   extension compilation for the default local verification path.
+- GitHub Actions runs the same 63-test pure archive gate in an official Ruby
+  2.7 image pinned by digest, without installing project dependencies.
 - The archive metadata check also requires completed canonical plans under
   `docs/plans`.
 - The fixture corpus includes malformed-input cases such as an unterminated
   block comment, preserving parser rejection behavior for archived tests.
+- Fixture pass/fail classification uses basenames so checkout directory names
+  cannot reclassify malformed JSON fixtures.
 - The pure parser tests also cover accepted comment behavior, including `//`
   line comments terminated by end-of-file.
 - The checked-in `json` and `json_pure` gemspec manifests are checked against
@@ -129,6 +133,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
   argument validation guard.
 - See `docs/plans/2026-06-10-local-server-loopback.md` for the local-only HTTP
   example server guard.
+- See `docs/plans/2026-06-10-hosted-archive-validation.md` for the pinned Ruby
+  2.7 hosted archive boundary.
+- See `docs/plans/2026-06-10-fixture-basename-classification.md` for the
+  path-independent fixture classification guard.
 
 ## Contributing
 

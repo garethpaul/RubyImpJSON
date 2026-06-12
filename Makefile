@@ -1,10 +1,13 @@
+ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+RUBY ?= ruby
+
 .PHONY: build check lint test verify
 
 lint:
-	ruby scripts/check_archive_metadata.rb
+	cd "$(ROOT)" && $(RUBY) scripts/check_archive_metadata.rb
 
 test:
-	env JSON=pure MAKE=make rake do_test_pure
+	cd "$(ROOT)" && env JSON=pure MAKE=make rake do_test_pure
 
 build: lint
 

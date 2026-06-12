@@ -40,12 +40,18 @@ The historical `tools/server.rb` WEBrick example should keep its port handling
 explicit so local test runs do not silently ignore caller-selected ports.
 It is a local-only HTTP archive demo and should stay bound to loopback unless a
 dedicated service design is added.
+Parser fixture classification should use fixture basenames so checkout paths
+cannot silently move malformed inputs into the passing corpus.
 The historical `tools/fuzz.rb` example should reject invalid count arguments
 before generating parser payloads.
 Prototype `parseQuery` and Java `parseObject` references are historical
 parser/prototype helper names, not Parse SDK or backend integrations.
 
 ## Dependency and Supply Chain Security
+
+Hosted archive validation installs no project dependencies, grants only read
+access to repository contents, and pins both the Ruby image and checkout action
+immutably.
 
 Dependency updates should come from trusted package managers and should keep lockfiles in sync when lockfiles exist. Do not commit credentials, private keys, tokens, generated secrets, or machine-local configuration. If a vulnerability depends on a compromised package, typosquatting risk, insecure transitive dependency, or unsafe build step, include the package name, affected version, and the path through which it is used.
 

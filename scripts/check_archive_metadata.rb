@@ -1,21 +1,47 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+ROOT = File.expand_path('..', __dir__)
+Dir.chdir(ROOT)
+
 failures = []
 
 docs_plans = Dir['docs/plans/*.md'].sort
 canonical_plan = 'docs/plans/2026-06-08-rubyimpjson-baseline.md'
 fuzzer_count_plan = 'docs/plans/2026-06-09-fuzzer-count-validation.md'
 local_server_plan = 'docs/plans/2026-06-10-local-server-loopback.md'
+hosted_validation_plan = 'docs/plans/2026-06-10-hosted-archive-validation.md'
+hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
 failures << "#{local_server_plan} is missing" unless File.exist?(local_server_plan)
+failures << "#{hosted_validation_plan} is missing" unless File.exist?(hosted_validation_plan)
+failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
 docs_plans.each do |plan_path|
   plan = File.read(plan_path)
   unless plan.include?('Status: Completed') && plan.include?('make check')
     failures << "#{plan_path} must record completed status and make check verification"
+  end
+end
+
+if File.exist?(hosted_validation_workflow)
+  workflow = File.read(hosted_validation_workflow)
+  [
+    'runs-on: ubuntu-24.04',
+    'permissions:',
+    'contents: read',
+    'ruby:2.7@sha256:2347de892e419c7160fc21dec721d5952736909f8c3fbb7f84cb4a07aaf9ce7d',
+    'uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10',
+    'run: make check'
+  ].each do |fragment|
+    failures << "#{hosted_validation_workflow} must include #{fragment.inspect}" unless workflow.include?(fragment)
+  end
+  workflow.scan(/^\s*uses:\s*([^@\s]+)@([^\s#]+)/).each do |action, revision|
+    unless revision.match?(/\A[a-f0-9]{40}\z/)
+      failures << "#{hosted_validation_workflow} action #{action} must be pinned to a full commit SHA"
+    end
   end
 end
 
@@ -62,6 +88,12 @@ else
   failures << "#{unterminated_comment_fixture} is missing"
 end
 
+fixture_test = File.read('tests/test_json_fixtures.rb')
+unless fixture_test.include?('File.basename(filename)') &&
+       fixture_test.include?("'/tmp/second-pass/fixtures/fail1.json'")
+  failures << 'tests/test_json_fixtures.rb must classify fixtures by basename, not parent paths'
+end
+
 rakefile = File.read('Rakefile')
 failures << 'Rakefile must define do_test_pure' unless rakefile.include?("t.name = 'do_test_pure'")
 
@@ -75,8 +107,20 @@ unless server.include?('def parse_port(value)') &&
 end
 unless server.include?(":BindAddress  => '127.0.0.1'") &&
        server.include?('"http://127.0.0.1:#{port}"') &&
+       server.include?('if $PROGRAM_NAME == __FILE__') &&
        !server.include?('Socket.gethostname')
   failures << 'tools/server.rb must keep the historical HTTP demo bound to loopback'
+end
+
+server_test = 'tests/test_server.rb'
+if File.exist?(server_test)
+  server_test_source = File.read(server_test)
+  unless server_test_source.include?("server.config[:BindAddress] == '127.0.0.1'") &&
+         server_test_source.include?("server.listeners.first.addr[3] == '127.0.0.1'")
+    failures << "#{server_test} must verify the configured and listening loopback addresses"
+  end
+else
+  failures << "#{server_test} is missing"
 end
 
 fuzzer = File.read('tools/fuzz.rb')

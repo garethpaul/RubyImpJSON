@@ -4,8 +4,14 @@
 
 - Bound the historical WEBrick example server to loopback and documented it as
   a local-only HTTP archive demo.
+- Made JSON fixture pass/fail classification independent of checkout directory
+  names and added a parent-path regression test.
 - Clarified that Prototype `parseQuery` and Java `parseObject` references are
   parser/prototype helpers, not Parse SDK/backend integrations.
+- Added dependency-free hosted validation for all 63 pure Ruby archive tests in
+  a digest-pinned Ruby 2.7 container.
+- Made the Makefile and archive checker independent of the caller's directory.
+- Added fail-closed checks for the hosted runtime and immutable action pin.
 
 ## 2026-06-09
 

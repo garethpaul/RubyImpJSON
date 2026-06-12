@@ -19,6 +19,7 @@ Priority:
 - Keep README and changelog context available
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
 - Preserve malformed-input fixtures such as unterminated block comments
+- Keep fixture pass/fail classification independent of checkout paths
 - Preserve accepted comment parsing behavior in the pure Ruby parser
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
 - Keep README archived-version notes aligned with the checked-in VERSION file
@@ -29,6 +30,7 @@ Priority:
 - Keep fuzzer frequency selection tied to the sampled random value
 - Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`
+- Keep the full pure Ruby archive suite enforced in pinned hosted validation
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 
 Next priorities:
