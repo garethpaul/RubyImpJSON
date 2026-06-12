@@ -65,7 +65,7 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - `make check` delegates to `make verify`, which runs archive metadata checks
   and the pure-Ruby test corpus with `JSON=pure`, avoiding Bundler and native
   extension compilation for the default local verification path.
-- GitHub Actions runs the same 63-test pure archive gate in an official Ruby
+- GitHub Actions runs the full pure archive gate in an official Ruby
   2.7 image pinned by digest, without installing project dependencies.
 - The archive metadata check also requires completed canonical plans under
   `docs/plans`.
@@ -86,6 +86,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   the TCP port range.
 - The example WEBrick server is a local-only HTTP archive demo bound to
   `127.0.0.1`; it is not a production network integration.
+- The pure-Ruby test corpus starts the loopback server and verifies that
+  `/json` returns the archived JSON and Unicode payload successfully.
 - The archive metadata check keeps the example fuzzer's frequency bucket
   selection tied to the sampled random value.
 - The archive metadata check keeps the example fuzzer count argument validated
@@ -99,6 +101,9 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 ## Security and Privacy Notes
 
+- Archived `json` 1.7.5 is affected by CVE-2013-0269 and CVE-2020-10663.
+  Do not deploy or newly depend on this snapshot; use a supported JSON
+  implementation for production workloads.
 - Review changes touching authentication or token handling; examples from the scan include ext/json/ext/parser/parser.c, java/src/json/ext/Generator.java, java/src/json/ext/Parser.java, lib/json/pure/parser.rb.
 - Review changes touching network requests, sockets, or service endpoints; examples from the scan include .travis.yml, data/index.html, data/prototype.js, lib/json.rb, and 2 more.
 - Review changes touching file, media, JSON, XML, CSV, OCR, or data parsing; examples from the scan include Gemfile, data/index.html, data/prototype.js, ext/json/ext/generator/extconf.rb, and 6 more.
@@ -137,6 +142,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   2.7 hosted archive boundary.
 - See `docs/plans/2026-06-10-fixture-basename-classification.md` for the
   path-independent fixture classification guard.
+- See `docs/plans/2026-06-12-archive-vulnerability-review.md` for the archived
+  package advisory, gem build, and non-production policy review.
 
 ## Contributing
 

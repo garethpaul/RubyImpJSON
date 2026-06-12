@@ -15,6 +15,7 @@ The current focus is:
 
 Priority:
 
+- Keep CVE-2013-0269 and CVE-2020-10663 visible as archived package risks
 - Preserve parser, generator, fixture, and gemspec files
 - Keep README and changelog context available
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
@@ -27,6 +28,7 @@ Priority:
 - Keep historical example tools wired to their documented arguments
 - Keep example server port arguments validated before startup
 - Keep the historical WEBrick HTTP example bound to loopback
+- Keep the local `/json` response covered by executable archive tests
 - Keep fuzzer frequency selection tied to the sampled random value
 - Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`
@@ -59,6 +61,9 @@ Prototype `parseQuery` and Java `parseObject` names are historical
 parser/prototype helpers, not Parse SDK or backend integrations.
 
 ## What We Will Not Merge (For Now)
+
+- Claims that version 1.7.5 is safe for new production use despite its known
+  advisories (CVE-2013-0269 and CVE-2020-10663)
 
 - Parser behavior changes without fixtures
 - Packaging claims that conflict with the archived version
