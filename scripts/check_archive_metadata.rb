@@ -12,12 +12,14 @@ fuzzer_count_plan = 'docs/plans/2026-06-09-fuzzer-count-validation.md'
 local_server_plan = 'docs/plans/2026-06-10-local-server-loopback.md'
 hosted_validation_plan = 'docs/plans/2026-06-10-hosted-archive-validation.md'
 vulnerability_review_plan = 'docs/plans/2026-06-12-archive-vulnerability-review.md'
+gem_build_plan = 'docs/plans/2026-06-12-gem-package-build-contract.md'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
 failures << "#{local_server_plan} is missing" unless File.exist?(local_server_plan)
 failures << "#{hosted_validation_plan} is missing" unless File.exist?(hosted_validation_plan)
 failures << "#{vulnerability_review_plan} is missing" unless File.exist?(vulnerability_review_plan)
+failures << "#{gem_build_plan} is missing" unless File.exist?(gem_build_plan)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
@@ -169,6 +171,33 @@ unless fuzzer.include?('def parse_count(value)') &&
   failures << 'tools/fuzz.rb must validate positive integer fuzzer counts before generating payloads'
 end
 
+gem_build_test = 'scripts/test_gem_builds.rb'
+if File.exist?(gem_build_test)
+  gem_build_source = File.read(gem_build_test)
+  [
+    "'json.gemspec'",
+    "'json_pure.gemspec'",
+    "'json-java.gemspec'",
+    ["require 'rubygems/", "package'"].join,
+    "entry.include?('\\\\')",
+    ["components.include?('", ".')"].join,
+    ["components.include?('", "..')"].join,
+    ['path.cleanpath.to_s ', '!= entry'].join,
+    'canonical manifest paths without ./ aliases',
+    ['repository_gems_after == ', 'repository_gems_before'].join,
+    'Gem package build tests passed'
+  ].each do |fragment|
+    failures << "#{gem_build_test} must include #{fragment.inspect}" unless gem_build_source.include?(fragment)
+  end
+else
+  failures << "#{gem_build_test} is missing"
+end
+
+makefile = File.read('Makefile')
+unless makefile.include?('cd "$(ROOT)" && $(RUBY) scripts/test_gem_builds.rb')
+  failures << 'Makefile build must run the gem package build contract from ROOT'
+end
+
 readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
 failures << 'README.md must document the JSON=pure test variant' unless readme.include?('JSON=pure')
@@ -176,6 +205,7 @@ failures << 'README.md must link ARCHIVE_STATUS.md' unless readme.include?('ARCH
 failures << "README.md must document archived version #{version}" unless readme.include?("Archived version: #{version}")
 failures << 'README.md must document the local-only HTTP example server' unless readme.include?('local-only HTTP')
 failures << 'README.md must clarify parseQuery/parseObject are not Parse SDK integrations' unless readme.include?('not Parse SDK')
+failures << 'README.md must document the gem package build contract' unless readme.include?('gem package build contract')
 docs_plans.each do |plan_path|
   failures << "README.md must reference #{plan_path}" unless readme.include?(plan_path)
 end
@@ -199,6 +229,10 @@ end
 security = File.read('SECURITY.md')
 failures << 'SECURITY.md must document local-only HTTP server scope' unless security.include?('local-only HTTP')
 failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK integrations' unless security.include?('not Parse SDK')
+
+[readme, archive_status, security, File.read('VISION.md'), File.read('CHANGES.md')].each_with_index do |document, index|
+  failures << "archive document #{index + 1} must mention the gem package build contract" unless document.include?('gem package build contract')
+end
 
 archive_risk_docs = [readme, archive_status, security, File.read('VISION.md')]
 %w[CVE-2013-0269 CVE-2020-10663].each do |advisory|

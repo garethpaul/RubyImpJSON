@@ -25,12 +25,16 @@ deploy or newly depend on this snapshot.
 - Example WEBrick `/json` status, content type, and archived payload behavior
 - Example fuzzer frequency selection tied to the sampled random value
 - Example fuzzer count validation for positive integer payload counts
+- Temporary native, pure-Ruby, and Java gem package build contract with
+  metadata, representative payload, archive-path, and artifact-cleanup checks
 
 ## Verification Baseline
 
 Use `make verify` for local maintenance checks. The default verification path
 forces `JSON=pure` and avoids Bundler/native-extension compilation so the
-archived pure Ruby implementation is exercised consistently.
+archived pure Ruby implementation is exercised consistently. `make build`
+separately validates all three gem packages without installing or publishing
+them.
 
 The canonical maintenance baseline is recorded in
 `docs/plans/2026-06-08-rubyimpjson-baseline.md`.

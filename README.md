@@ -65,6 +65,9 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - `make check` delegates to `make verify`, which runs archive metadata checks
   and the pure-Ruby test corpus with `JSON=pure`, avoiding Bundler and native
   extension compilation for the default local verification path.
+- `make build` runs the dependency-free gem package build contract for the
+  native, pure-Ruby, and Java gemspecs in a temporary directory, checks package
+  metadata and representative payloads, and leaves no `.gem` artifacts.
 - GitHub Actions runs the full pure archive gate in an official Ruby
   2.7 image pinned by digest, without installing project dependencies.
 - The archive metadata check also requires completed canonical plans under
@@ -144,6 +147,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   path-independent fixture classification guard.
 - See `docs/plans/2026-06-12-archive-vulnerability-review.md` for the archived
   package advisory, gem build, and non-production policy review.
+- See `docs/plans/2026-06-12-gem-package-build-contract.md` for the temporary
+  gem package build contract and archive-entry checks.
 
 ## Contributing
 

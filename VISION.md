@@ -23,6 +23,8 @@ Priority:
 - Keep fixture pass/fail classification independent of checkout paths
 - Preserve accepted comment parsing behavior in the pure Ruby parser
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
+- Keep the native, pure-Ruby, and Java gem package build contract temporary,
+  path-safe, and artifact-free
 - Keep README archived-version notes aligned with the checked-in VERSION file
 - Keep README maintenance notes linked to every canonical plan
 - Keep historical example tools wired to their documented arguments
