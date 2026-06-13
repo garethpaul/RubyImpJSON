@@ -27,7 +27,9 @@ class JSONServlet < HTTPServlet::AbstractServlet
       'j' => "\xf0\xa0\x80\x81",
     }
     res.body = JSON.generate obj
-    res['Content-Type'] = "application/json"
+    res['Content-Type'] = "application/json; charset=utf-8"
+    res['Cache-Control'] = "no-store"
+    res['X-Content-Type-Options'] = "nosniff"
   end
 end
 

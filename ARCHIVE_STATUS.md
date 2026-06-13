@@ -23,6 +23,7 @@ deploy or newly depend on this snapshot.
 - Example WEBrick server port validation for integer TCP port arguments
 - Example WEBrick server local-only HTTP loopback binding
 - Example WEBrick `/json` status, content type, and archived payload behavior
+- Example WEBrick `/json` UTF-8, no-store, and nosniff response headers
 - Example fuzzer frequency selection tied to the sampled random value
 - Example fuzzer count validation for positive integer payload counts
 - Temporary native, pure-Ruby, and Java gem package build contract with

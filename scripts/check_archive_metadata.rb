@@ -145,6 +145,11 @@ unless server.include?(":BindAddress  => '127.0.0.1'") &&
        !server.include?('Socket.gethostname')
   failures << 'tools/server.rb must keep the historical HTTP demo bound to loopback'
 end
+unless server.include?('res[\'Content-Type\'] = "application/json; charset=utf-8"') &&
+       server.include?('res[\'Cache-Control\'] = "no-store"') &&
+       server.include?('res[\'X-Content-Type-Options\'] = "nosniff"')
+  failures << 'tools/server.rb must keep explicit local JSON response headers'
+end
 
 server_test = 'tests/test_server.rb'
 if File.exist?(server_test)
@@ -152,6 +157,9 @@ if File.exist?(server_test)
   unless server_test_source.include?("server.config[:BindAddress] == '127.0.0.1'") &&
          server_test_source.include?("server.listeners.first.addr[3] == '127.0.0.1'") &&
          server_test_source.include?("http.get('/json')") &&
+         server_test_source.include?("response['Content-Type'] == 'application/json; charset=utf-8'") &&
+         server_test_source.include?("response['Cache-Control'] == 'no-store'") &&
+         server_test_source.include?("response['X-Content-Type-Options'] == 'nosniff'") &&
          server_test_source.include?("JSON.parse(response.body)")
     failures << "#{server_test} must verify loopback binding and the JSON endpoint response"
   end
@@ -268,6 +276,20 @@ failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK i
 [readme, archive_status, security, File.read('VISION.md'), File.read('CHANGES.md')].each_with_index do |document, index|
   failures << "archive document #{index + 1} must mention the gem package build contract" unless document.include?('gem package build contract')
   failures << "archive document #{index + 1} must mention the dual-license metadata" unless document.include?('Ruby or GPL-2.0-only')
+end
+
+response_header_docs = {
+  'README.md' => ['explicit UTF-8', 'no-store', 'nosniff'],
+  'ARCHIVE_STATUS.md' => ['UTF-8', 'no-store', 'nosniff response headers'],
+  'SECURITY.md' => ['explicit UTF-8', 'Cache-Control: no-store', 'X-Content-Type-Options: nosniff'],
+  'VISION.md' => ['explicit UTF-8', 'no-store', 'nosniff headers'],
+  'CHANGES.md' => ['explicit UTF-8', 'no-store', 'nosniff headers']
+}
+response_header_docs.each do |path, fragments|
+  document = File.read(path).delete('`')
+  fragments.each do |fragment|
+    failures << "#{path} must document #{fragment.inspect}" unless document.include?(fragment)
+  end
 end
 
 archive_risk_docs = [readme, archive_status, security, File.read('VISION.md')]

@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-13
+
+- Added explicit UTF-8, no-store, and nosniff headers to the loopback `/json`
+  response and required them through the executable archive test.
+
 ## 2026-06-12
 
 - Added an executable `/json` response test for the loopback-only WEBrick demo,

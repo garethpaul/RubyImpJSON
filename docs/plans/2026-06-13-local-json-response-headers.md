@@ -1,6 +1,6 @@
 # Local JSON Response Headers
 
-## Status: In Progress
+## Status: Completed
 
 ## Context
 
@@ -24,14 +24,28 @@ avoid cached or reinterpreted responses without changing the historical body.
 - Add fail-closed archive metadata contracts and hostile mutations.
 - Preserve loopback binding, status, timestamp, counter, and Unicode payload.
 
-## Planned Verification
+## Work Completed
+
+- Declared the local JSON response as UTF-8.
+- Added no-store cache policy and MIME-sniffing protection.
+- Extended the real loopback request test to require all three exact headers.
+- Added fail-closed source, executable-test, documentation, and plan contracts.
+- Updated README, security, vision, changes, and archive-status documentation.
+
+## Verification
 
 - `ruby tests/test_server.rb`
 - `ruby scripts/check_archive_metadata.rb`
 - `make check`
 - Digest-pinned, read-only, network-isolated Ruby 2.7 archive gate
-- Focused charset, cache, nosniff, test, documentation, and plan mutations
+- Six focused charset, cache, nosniff, test, documentation, and plan mutations
 - Ruby syntax, secret, artifact, and `git diff --check` audits
+
+The isolated server test passed against a real loopback request. Full
+`make check` passed 64 archive tests with 2,014 assertions and all three
+temporary gem package builds; the exact digest-pinned Ruby 2.7 container gate
+also passed with a read-only checkout and disabled networking. All six focused
+mutations were rejected by the archive metadata checker.
 
 ## Scope Boundary
 
