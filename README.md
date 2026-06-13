@@ -92,7 +92,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - The example WEBrick server is a local-only HTTP archive demo bound to
   `127.0.0.1`; it is not a production network integration.
 - The pure-Ruby test corpus starts the loopback server and verifies that
-  `/json` returns the archived JSON and Unicode payload successfully.
+  `/json` returns the archived JSON and Unicode payload with explicit UTF-8,
+  no-store, and nosniff response headers.
 - The archive metadata check keeps the example fuzzer's frequency bucket
   selection tied to the sampled random value.
 - The archive metadata check keeps the example fuzzer count argument validated
@@ -143,6 +144,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   argument validation guard.
 - See `docs/plans/2026-06-10-local-server-loopback.md` for the local-only HTTP
   example server guard.
+- See `docs/plans/2026-06-13-local-json-response-headers.md` for the explicit
+  UTF-8, no-store, and nosniff local response contract.
 - See `docs/plans/2026-06-10-hosted-archive-validation.md` for the pinned Ruby
   2.7 hosted archive boundary.
 - See `docs/plans/2026-06-10-fixture-basename-classification.md` for the

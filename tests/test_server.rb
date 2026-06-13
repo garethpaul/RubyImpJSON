@@ -43,7 +43,9 @@ begin
   http = Net::HTTP.new('127.0.0.1', port, nil)
   response = http.get('/json')
   raise "unexpected status #{response.code}" unless response.code == '200'
-  raise 'unexpected content type' unless response['Content-Type'].start_with?('application/json')
+  raise 'unexpected content type' unless response['Content-Type'] == 'application/json; charset=utf-8'
+  raise 'response must not be cached' unless response['Cache-Control'] == 'no-store'
+  raise 'response must disable MIME sniffing' unless response['X-Content-Type-Options'] == 'nosniff'
 
   payload = JSON.parse(response.body)
   raise 'missing timestamp' unless payload['TIME'].is_a?(String)

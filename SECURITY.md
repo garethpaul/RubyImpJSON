@@ -40,6 +40,8 @@ The historical `tools/server.rb` WEBrick example should keep its port handling
 explicit so local test runs do not silently ignore caller-selected ports.
 It is a local-only HTTP archive demo and should stay bound to loopback unless a
 dedicated service design is added.
+Its `/json` response should retain explicit UTF-8, `Cache-Control: no-store`,
+and `X-Content-Type-Options: nosniff` headers.
 Parser fixture classification should use fixture basenames so checkout paths
 cannot silently move malformed inputs into the passing corpus.
 The historical `tools/fuzz.rb` example should reject invalid count arguments
