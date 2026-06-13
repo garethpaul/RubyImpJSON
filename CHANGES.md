@@ -2,6 +2,8 @@
 
 ## 2026-06-13
 
+- Restricted the archived servlet to the exact `/json` path while preserving
+  query strings and rejecting descendants before payload generation.
 - Added explicit UTF-8, no-store, and nosniff headers to the loopback `/json`
   response and required them through the executable archive test.
 

@@ -150,6 +150,9 @@ unless server.include?('res[\'Content-Type\'] = "application/json; charset=utf-8
        server.include?('res[\'X-Content-Type-Options\'] = "nosniff"')
   failures << 'tools/server.rb must keep explicit local JSON response headers'
 end
+unless server.include?("raise HTTPStatus::NotFound unless req.path == '/json'")
+  failures << 'tools/server.rb must keep the local JSON servlet on the exact /json path'
+end
 
 server_test = 'tests/test_server.rb'
 if File.exist?(server_test)
@@ -160,7 +163,12 @@ if File.exist?(server_test)
          server_test_source.include?("response['Content-Type'] == 'application/json; charset=utf-8'") &&
          server_test_source.include?("response['Cache-Control'] == 'no-store'") &&
          server_test_source.include?("response['X-Content-Type-Options'] == 'nosniff'") &&
-         server_test_source.include?("JSON.parse(response.body)")
+         server_test_source.include?("JSON.parse(response.body)") &&
+         server_test_source.include?("http.get('/json?source=test')") &&
+         server_test_source.include?("http.get('/json/extra')") &&
+         server_test_source.include?("descendant.code == '404'") &&
+         server_test_source.include?("descendant must not be JSON") &&
+         server_test_source.include?("rejected descendant incremented the counter")
     failures << "#{server_test} must verify loopback binding and the JSON endpoint response"
   end
 else
@@ -289,6 +297,12 @@ response_header_docs.each do |path, fragments|
   document = File.read(path).delete('`')
   fragments.each do |fragment|
     failures << "#{path} must document #{fragment.inspect}" unless document.include?(fragment)
+  end
+end
+
+%w[README.md VISION.md CHANGES.md].each do |path|
+  unless File.read(path).delete('`').include?('exact /json path')
+    failures << "#{path} must document the exact /json path"
   end
 end
 

@@ -11,6 +11,8 @@ class JSONServlet < HTTPServlet::AbstractServlet
   @@count = 1
 
   def do_GET(req, res)
+    raise HTTPStatus::NotFound unless req.path == '/json'
+
     obj = {
       "TIME" => Time.now.strftime("%FT%T"),
       "foo" => "Bär",
