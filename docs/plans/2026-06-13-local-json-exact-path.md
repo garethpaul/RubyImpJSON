@@ -1,6 +1,6 @@
 # Local JSON Exact Path
 
-## Status: Planned
+## Status: Completed
 
 ## Context
 
@@ -80,3 +80,25 @@ plan, and documentation through the canonical archive contract.
 
 This change does not add authentication, HTTPS, CORS, production deployment
 support, or new endpoints, and it does not alter the archived JSON gem payload.
+
+## Work Completed
+
+- Added an exact parsed-path guard before JSON payload generation.
+- Preserved query strings for the documented `/json` endpoint.
+- Extended the real loopback test with descendant 404, non-JSON response, and
+  counter non-increment assertions.
+- Protected the guard, route tests, documentation, and completed plan in the
+  archive metadata checker.
+- Synchronized README, vision, and change-history documentation.
+
+## Verification
+
+- `ruby tests/test_server.rb` passed both isolated loopback tests.
+- `make check` passed archive metadata contracts, 64 tests with 2,014
+  assertions, and all three gem package builds.
+- Seven focused guard, path, status, content-type, counter, documentation, and
+  completed-plan mutations were rejected.
+- The digest-pinned Ruby 2.7 hosted image passed `make check` against a
+  standalone exact-file snapshot with a read-only source mount and disabled
+  networking.
+- `git diff --check` is required before shipping.

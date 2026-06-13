@@ -41,7 +41,7 @@ thread = Thread.new { server.start }
 begin
   port = server.listeners.first.addr[1]
   http = Net::HTTP.new('127.0.0.1', port, nil)
-  response = http.get('/json')
+  response = http.get('/json?source=test')
   raise "unexpected status #{response.code}" unless response.code == '200'
   raise 'unexpected content type' unless response['Content-Type'] == 'application/json; charset=utf-8'
   raise 'response must not be cached' unless response['Cache-Control'] == 'no-store'
@@ -51,6 +51,13 @@ begin
   raise 'missing timestamp' unless payload['TIME'].is_a?(String)
   raise 'missing counter' unless payload['COUNT'].is_a?(Integer)
   raise 'unicode payload changed' unless payload['foo'] == 'Bär' && payload['g'] == '松本行弘'
+
+  descendant = http.get('/json/extra')
+  raise "unexpected descendant status #{descendant.code}" unless descendant.code == '404'
+  raise 'descendant must not be JSON' if descendant['Content-Type'].to_s.start_with?('application/json')
+
+  next_payload = JSON.parse(http.get('/json').body)
+  raise 'rejected descendant incremented the counter' unless next_payload['COUNT'] == payload['COUNT'] + 1
 ensure
   server.shutdown
   thread.join

@@ -33,6 +33,7 @@ Priority:
 - Keep example server port arguments validated before startup
 - Keep the historical WEBrick HTTP example bound to loopback
 - Keep the local `/json` response covered by executable archive tests
+- Keep the exact `/json` path distinct from rejected descendant routes
 - Keep explicit UTF-8, no-store, and nosniff headers on the local JSON response
 - Keep fuzzer frequency selection tied to the sampled random value
 - Keep fuzzer count arguments validated before payload generation
