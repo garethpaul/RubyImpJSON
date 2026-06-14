@@ -1,6 +1,6 @@
 # Make Root Override Protection
 
-## Status: Planned
+## Status: Completed
 
 ## Context
 
@@ -51,3 +51,25 @@ hosted Ruby image, hostile mutations, and integrity screening.
 - root-declaration, checker, plan-status, README-index, and evidence mutations
 - Ruby syntax, workflow YAML, protected-file, secret, artifact, and
   `git diff --check` gates
+
+## Work Completed
+
+- Protected the Makefile-derived repository root from command-line and
+  environment overrides while preserving configurable Ruby selection.
+- Added exact declaration and completed-evidence archive contracts.
+- Preserved archived source, fixtures, server behavior, gem metadata, and
+  package-build boundaries.
+
+## Verification Results
+
+- `ruby scripts/check_archive_metadata.rb` passed.
+- From both the checkout and an external directory, all five public Make aliases passed.
+- `make ROOT=/tmp check` passed externally while still running repository-owned
+  archive, pure-test, and gem-package gates.
+- The digest-pinned Ruby 2.7 hosted image passed `make check` with networking
+  disabled and the source mounted read-only.
+- Six hostile mutations were rejected across root declaration, checker
+  expectation, plan status, README indexing, and recorded evidence.
+- Ruby syntax, workflow YAML, exact-base protected-file comparison, secret
+  screening, generated-artifact screening, and `git diff --check` passed before
+  shipping.

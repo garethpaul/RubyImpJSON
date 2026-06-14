@@ -14,6 +14,7 @@ hosted_validation_plan = 'docs/plans/2026-06-10-hosted-archive-validation.md'
 vulnerability_review_plan = 'docs/plans/2026-06-12-archive-vulnerability-review.md'
 gem_build_plan = 'docs/plans/2026-06-12-gem-package-build-contract.md'
 gem_metadata_plan = 'docs/plans/2026-06-12-gem-license-dependency-metadata.md'
+make_root_plan = 'docs/plans/2026-06-14-make-root-override-protection.md'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
@@ -22,6 +23,7 @@ failures << "#{hosted_validation_plan} is missing" unless File.exist?(hosted_val
 failures << "#{vulnerability_review_plan} is missing" unless File.exist?(vulnerability_review_plan)
 failures << "#{gem_build_plan} is missing" unless File.exist?(gem_build_plan)
 failures << "#{gem_metadata_plan} is missing" unless File.exist?(gem_metadata_plan)
+failures << "#{make_root_plan} is missing" unless File.exist?(make_root_plan)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
@@ -243,6 +245,11 @@ unless rakefile_source.scan("s.add_development_dependency 'permutation', '~> 0.1
 end
 
 makefile = File.read('Makefile')
+root_declaration = 'override ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))'
+root_assignments = makefile.lines.map(&:chomp).grep(/\A(?:override\s+)?ROOT\s*[:?+]?=/)
+unless makefile.start_with?("#{root_declaration}\n") && root_assignments == [root_declaration]
+  failures << 'Makefile must define exactly one protected repository-derived ROOT declaration first'
+end
 unless makefile.include?('cd "$(ROOT)" && $(RUBY) scripts/test_gem_builds.rb')
   failures << 'Makefile build must run the gem package build contract from ROOT'
 end
@@ -261,6 +268,19 @@ docs_plans.each do |plan_path|
 end
 readme.scan(%r{docs/plans/[-\w.]+\.md}).each do |plan_path|
   failures << "README.md references missing plan #{plan_path}" unless File.exist?(plan_path)
+end
+
+if File.exist?(make_root_plan)
+  root_plan = File.read(make_root_plan)
+  [
+    'Status: Completed',
+    '`make ROOT=/tmp check` passed',
+    'all five public Make aliases passed',
+    'Six hostile mutations were rejected',
+    'digest-pinned Ruby 2.7'
+  ].each do |evidence|
+    failures << "#{make_root_plan} must record verification evidence #{evidence.inspect}" unless root_plan.include?(evidence)
+  end
 end
 
 archive_status = ''
