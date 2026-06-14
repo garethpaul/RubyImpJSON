@@ -159,6 +159,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   gem package build contract and archive-entry checks.
 - See `docs/plans/2026-06-12-gem-license-dependency-metadata.md` for preserved
   dual-license declarations, bounded development resolution, and warning checks.
+- See `docs/plans/2026-06-14-make-root-override-protection.md` for the
+  caller-resistant, location-independent archive verification root.
 
 ## Contributing
 
