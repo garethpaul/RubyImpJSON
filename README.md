@@ -95,6 +95,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   the exact `/json` path returns the archived JSON and Unicode payload with
   explicit UTF-8, no-store, and nosniff response headers while descendants
   return not found.
+- Absolute server loads resolve `lib` and `ext` from the checkout, so an
+  external caller cannot silently substitute the system JSON gem.
 - The archive metadata check keeps the example fuzzer's frequency bucket
   selection tied to the sampled random value.
 - The archive metadata check keeps the example fuzzer count argument validated
@@ -161,6 +163,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   dual-license declarations, bounded development resolution, and warning checks.
 - See `docs/plans/2026-06-14-make-root-override-protection.md` for the
   caller-resistant, location-independent archive verification root.
+- See `docs/plans/2026-06-14-server-repository-load-path.md` for
+  caller-directory independent loading of the archived JSON implementation.
 
 ## Contributing
 

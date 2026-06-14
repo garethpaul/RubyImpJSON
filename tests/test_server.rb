@@ -1,8 +1,30 @@
 require 'open3'
 require 'rbconfig'
 require 'test/unit'
+require 'tmpdir'
 
 class TestServer < Test::Unit::TestCase
+  def test_absolute_server_load_uses_archived_json_outside_checkout
+    server_path = File.expand_path('../tools/server.rb', __dir__)
+    archive_lib = File.expand_path('../lib', __dir__)
+    script = <<RUBY
+require #{server_path.dump}
+raise "unexpected JSON version \#{JSON::VERSION}" unless JSON::VERSION == '1.7.5'
+version_feature = $LOADED_FEATURES.find { |feature| feature.end_with?('/json/version.rb') }
+raise "unexpected JSON feature \#{version_feature}" unless version_feature.start_with?(#{archive_lib.dump})
+RUBY
+
+    _stdout, stderr, status = Open3.capture3(
+      { 'JSON' => 'pure' },
+      RbConfig.ruby,
+      '-e',
+      script,
+      :chdir => Dir.tmpdir
+    )
+
+    assert_predicate status, :success?, stderr
+  end
+
   def test_create_server_binds_only_to_ipv4_loopback
     script = <<'RUBY'
 require 'stringio'
