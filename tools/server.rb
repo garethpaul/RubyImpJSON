@@ -3,8 +3,9 @@
 
 require 'webrick'
 include WEBrick
-$:.unshift 'ext'
-$:.unshift 'lib'
+archive_root = File.expand_path('..', __dir__)
+$:.unshift File.join(archive_root, 'ext')
+$:.unshift File.join(archive_root, 'lib')
 require 'json'
 
 class JSONServlet < HTTPServlet::AbstractServlet

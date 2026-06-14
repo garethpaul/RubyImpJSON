@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-14
+
+- Made the loopback server resolve archived JSON load paths from its own
+  location instead of silently loading the system gem from external callers.
+
 ## 2026-06-13
 
 - Restricted the archived servlet to the exact `/json` path while preserving

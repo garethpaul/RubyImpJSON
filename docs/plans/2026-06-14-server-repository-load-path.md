@@ -1,6 +1,6 @@
 # Repository-Relative Server Load Path
 
-## Status: Planned
+## Status: Completed
 
 ## Context
 
@@ -41,3 +41,15 @@ system JSON gem instead of this archived source tree.
 - Do not change the archived JSON implementation, gem metadata, HTTP payload,
   network exposure, or production suitability.
 - Do not merge or close stacked pull requests without explicit authorization.
+
+## Verification Results
+
+- The external-directory server test passed with archived JSON 1.7.5 loaded
+  from the checkout, and all three focused server tests passed.
+- The repository and external-directory `make check` passed the archive
+  metadata contract, pure-Ruby suite, and temporary gem package builds.
+- Six hostile load-path mutations were rejected across script-relative roots,
+  archived library selection, external working directory, version assertion,
+  README indexing, and completed-plan evidence.
+- Final exact-diff, generated-artifact, secret-pattern, conflict-marker, and
+  syntax audits found only intended paths and no artifacts.

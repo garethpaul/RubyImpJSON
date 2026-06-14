@@ -15,6 +15,7 @@ vulnerability_review_plan = 'docs/plans/2026-06-12-archive-vulnerability-review.
 gem_build_plan = 'docs/plans/2026-06-12-gem-package-build-contract.md'
 gem_metadata_plan = 'docs/plans/2026-06-12-gem-license-dependency-metadata.md'
 make_root_plan = 'docs/plans/2026-06-14-make-root-override-protection.md'
+server_load_path_plan = 'docs/plans/2026-06-14-server-repository-load-path.md'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
@@ -24,6 +25,7 @@ failures << "#{vulnerability_review_plan} is missing" unless File.exist?(vulnera
 failures << "#{gem_build_plan} is missing" unless File.exist?(gem_build_plan)
 failures << "#{gem_metadata_plan} is missing" unless File.exist?(gem_metadata_plan)
 failures << "#{make_root_plan} is missing" unless File.exist?(make_root_plan)
+failures << "#{server_load_path_plan} is missing" unless File.exist?(server_load_path_plan)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
@@ -155,6 +157,11 @@ end
 unless server.include?("raise HTTPStatus::NotFound unless req.path == '/json'")
   failures << 'tools/server.rb must keep the local JSON servlet on the exact /json path'
 end
+unless server.include?("archive_root = File.expand_path('..', __dir__)") &&
+       server.include?("$:.unshift File.join(archive_root, 'ext')") &&
+       server.include?("$:.unshift File.join(archive_root, 'lib')")
+  failures << 'tools/server.rb must load archived JSON relative to itself'
+end
 
 server_test = 'tests/test_server.rb'
 if File.exist?(server_test)
@@ -170,7 +177,10 @@ if File.exist?(server_test)
          server_test_source.include?("http.get('/json/extra')") &&
          server_test_source.include?("descendant.code == '404'") &&
          server_test_source.include?("descendant must not be JSON") &&
-         server_test_source.include?("rejected descendant incremented the counter")
+         server_test_source.include?("rejected descendant incremented the counter") &&
+         server_test_source.include?('test_absolute_server_load_uses_archived_json_outside_checkout') &&
+         server_test_source.include?("JSON::VERSION == '1.7.5'") &&
+         server_test_source.include?(':chdir => Dir.tmpdir')
     failures << "#{server_test} must verify loopback binding and the JSON endpoint response"
   end
 else
@@ -280,6 +290,18 @@ if File.exist?(make_root_plan)
     'digest-pinned Ruby 2.7'
   ].each do |evidence|
     failures << "#{make_root_plan} must record verification evidence #{evidence.inspect}" unless root_plan.include?(evidence)
+  end
+end
+
+if File.exist?(server_load_path_plan)
+  server_load_path_evidence = File.read(server_load_path_plan)
+  [
+    'Status: Completed',
+    'external-directory server test passed',
+    'repository and external-directory `make check` passed',
+    'hostile load-path mutations were rejected'
+  ].each do |evidence|
+    failures << "#{server_load_path_plan} must record verification evidence #{evidence.inspect}" unless server_load_path_evidence.include?(evidence)
   end
 end
 
