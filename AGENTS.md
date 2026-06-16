@@ -21,6 +21,8 @@
 - Lint/static checks: `make lint`
 - Tests: `make test`
 - Build: `make build`
+- Java source compile gate: `make java-check` after installing
+  `jruby-jars 1.7.27` and selecting Java 8
 - If a command above skips because a platform toolchain is missing, verify on a machine with that SDK before claiming platform behavior is tested.
 
 ## Coding conventions

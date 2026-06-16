@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-16
+
+- Added a Java source compile gate that verifies the pinned JRuby 1.7.27 API,
+  compiles all twelve archived extension sources with Java 8 compatibility,
+  and leaves no class files in the checkout.
+
 ## 2026-06-14
 
 - Made the loopback server resolve archived JSON load paths from its own

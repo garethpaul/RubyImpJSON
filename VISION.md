@@ -39,6 +39,8 @@ Priority:
 - Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`
 - Keep the full pure Ruby archive suite enforced in pinned hosted validation
+- Keep the Java source compile gate pinned to the historical JRuby 1.7.27 API
+  and Java 8 compatibility without committing compiler output
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 
 Next priorities:

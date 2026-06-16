@@ -70,6 +70,10 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   metadata and representative payloads, and leaves no `.gem` artifacts. The
   contract verifies Ruby or GPL-2.0-only license and dependency metadata,
   including the bounded `permutation ~> 0.1` development requirement.
+- Install `jruby-jars 1.7.27`, select Java 8, and run `make java-check` to use
+  the Java source compile gate. It verifies the exact historical JRuby API jar,
+  compiles all twelve archived extension sources into a temporary directory,
+  and leaves no class files in the checkout.
 - GitHub Actions runs the full pure archive gate in an official Ruby
   2.7 image pinned by digest, without installing project dependencies.
 - The archive metadata check also requires completed canonical plans under
@@ -165,6 +169,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   caller-resistant, location-independent archive verification root.
 - See `docs/plans/2026-06-14-server-repository-load-path.md` for
   caller-directory independent loading of the archived JSON implementation.
+- See `docs/plans/2026-06-16-java-source-compile-gate.md` for the pinned Java 8
+  compiler boundary for the archived JRuby extension sources.
 
 ## Contributing
 

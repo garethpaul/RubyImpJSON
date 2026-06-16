@@ -16,6 +16,8 @@ gem_build_plan = 'docs/plans/2026-06-12-gem-package-build-contract.md'
 gem_metadata_plan = 'docs/plans/2026-06-12-gem-license-dependency-metadata.md'
 make_root_plan = 'docs/plans/2026-06-14-make-root-override-protection.md'
 server_load_path_plan = 'docs/plans/2026-06-14-server-repository-load-path.md'
+java_compile_plan = 'docs/plans/2026-06-16-java-source-compile-gate.md'
+java_compile_check = 'scripts/check_java_sources.rb'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
 failures << "#{fuzzer_count_plan} is missing" unless File.exist?(fuzzer_count_plan)
@@ -26,6 +28,8 @@ failures << "#{gem_build_plan} is missing" unless File.exist?(gem_build_plan)
 failures << "#{gem_metadata_plan} is missing" unless File.exist?(gem_metadata_plan)
 failures << "#{make_root_plan} is missing" unless File.exist?(make_root_plan)
 failures << "#{server_load_path_plan} is missing" unless File.exist?(server_load_path_plan)
+failures << "#{java_compile_plan} is missing" unless File.exist?(java_compile_plan)
+failures << "#{java_compile_check} is missing" unless File.exist?(java_compile_check)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
 
@@ -47,15 +51,24 @@ if File.exist?(hosted_validation_workflow)
     'persist-credentials: false',
     'timeout-minutes: 10',
     'cancel-in-progress: true',
-    'run: make check'
+    'run: make check',
+    'java-archive:',
+    'name: Java 8 archived source compilation',
+    'uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00',
+    'distribution: temurin',
+    "java-version: '8'",
+    'run: gem install --user-install --no-document jruby-jars -v 1.7.27',
+    'run: make java-check'
   ].each do |fragment|
     failures << "#{hosted_validation_workflow} must include #{fragment.inspect}" unless workflow.include?(fragment)
   end
   actions = workflow.scan(/^\s*(?:-\s*)?uses:\s*([^@\s]+)@([^\s#]+)/)
   expected_actions = [
-    ['actions/checkout', '9f698171ed81b15d1823a05fc7211befd50c8ae0']
+    ['actions/checkout', '9f698171ed81b15d1823a05fc7211befd50c8ae0'],
+    ['actions/checkout', '9f698171ed81b15d1823a05fc7211befd50c8ae0'],
+    ['actions/setup-java', 'c5195efecf7bdfc987ee8bae7a71cb8b11521c00']
   ]
-  failures << "#{hosted_validation_workflow} must use only the approved checkout action" unless actions == expected_actions
+  failures << "#{hosted_validation_workflow} must use only the approved checkout and Java setup actions" unless actions == expected_actions
 
   actions.each do |action, revision|
     unless revision.match?(/\A[a-f0-9]{40}\z/)
@@ -66,8 +79,8 @@ if File.exist?(hosted_validation_workflow)
          !workflow.match?(/^\s+[A-Za-z0-9_-]+:\s*write\s*$/)
     failures << "#{hosted_validation_workflow} must keep exactly one read-only permissions block"
   end
-  unless workflow.scan(/persist-credentials:\s*false/).length == 1
-    failures << "#{hosted_validation_workflow} must disable persisted checkout credentials exactly once"
+  unless workflow.scan(/persist-credentials:\s*false/).length == 2
+    failures << "#{hosted_validation_workflow} must disable persisted checkout credentials for both jobs"
   end
   %w[push: pull_request: workflow_dispatch:].each do |trigger|
     failures << "#{hosted_validation_workflow} must include #{trigger}" unless workflow.match?(/^  #{Regexp.escape(trigger)}$/)
@@ -78,7 +91,12 @@ if File.exist?(hosted_validation_workflow)
   if workflow.match?(/^\s+branches:/)
     failures << "#{hosted_validation_workflow} must run push validation on every branch"
   end
-  if workflow.match?(/\b(?:bundle|gem)\s+(?:install|update)\b/)
+  approved_java_install = 'gem install --user-install --no-document jruby-jars -v 1.7.27'
+  unless workflow.scan(approved_java_install).length == 1
+    failures << "#{hosted_validation_workflow} must install the pinned JRuby compile API exactly once"
+  end
+  dependency_commands = workflow.gsub(approved_java_install, '')
+  if dependency_commands.match?(/\b(?:bundle|gem)\s+(?:install|update)\b/)
     failures << "#{hosted_validation_workflow} must keep archive validation dependency-free"
   end
 end
@@ -263,6 +281,30 @@ end
 unless makefile.include?('cd "$(ROOT)" && $(RUBY) scripts/test_gem_builds.rb')
   failures << 'Makefile build must run the gem package build contract from ROOT'
 end
+unless makefile.include?('java-check:') &&
+       makefile.include?('JAVAC ?= javac') &&
+       makefile.include?('cd "$(ROOT)" && JAVAC="$(JAVAC)" $(RUBY) scripts/check_java_sources.rb')
+  failures << 'Makefile must expose the repository-rooted Java source compile gate'
+end
+
+if File.exist?(java_compile_check)
+  java_compile_source = File.read(java_compile_check)
+  [
+    "JRUBY_JARS_VERSION = '1.7.27'",
+    "JRUBY_CORE_SHA256 = '0e68235b2d500020cbcbda807e60eb8d75ecd732e3e618726e84db78f02cc60d'",
+    "'-source', '1.5'",
+    "'-target', '1.5'",
+    "Dir.mktmpdir('rubyimpjson-java-check-')",
+    'rescue Errno::ENOENT',
+    "File.join(ROOT, 'java', 'src', '**', '*.class')"
+  ].each do |fragment|
+    failures << "#{java_compile_check} must include #{fragment.inspect}" unless java_compile_source.include?(fragment)
+  end
+  expected_java_sources = Dir['java/src/json/ext/*.java'].map { |path| File.basename(path) }.sort
+  expected_java_sources.each do |source|
+    failures << "#{java_compile_check} must require #{source}" unless java_compile_source.include?(source)
+  end
+end
 
 readme = File.read('README.md')
 failures << 'README.md must document make verify' unless readme.include?('make verify')
@@ -273,6 +315,8 @@ failures << 'README.md must document the local-only HTTP example server' unless 
 failures << 'README.md must clarify parseQuery/parseObject are not Parse SDK integrations' unless readme.include?('not Parse SDK')
 failures << 'README.md must document the gem package build contract' unless readme.include?('gem package build contract')
 failures << 'README.md must document gem license and dependency metadata checks' unless readme.include?('license and dependency metadata')
+failures << 'README.md must document make java-check' unless readme.include?('make java-check')
+failures << 'README.md must document jruby-jars 1.7.27' unless readme.include?('jruby-jars 1.7.27')
 docs_plans.each do |plan_path|
   failures << "README.md must reference #{plan_path}" unless readme.include?(plan_path)
 end
@@ -305,6 +349,19 @@ if File.exist?(server_load_path_plan)
   end
 end
 
+if File.exist?(java_compile_plan)
+  java_compile_evidence = File.read(java_compile_plan)
+  [
+    'Status: Completed',
+    'repository and external-directory `make java-check` passed',
+    'repository and external-directory `make check` passed',
+    'hostile compiler-gate mutations were rejected',
+    'JRuby extension runtime was not executed'
+  ].each do |evidence|
+    failures << "#{java_compile_plan} must record verification evidence #{evidence.inspect}" unless java_compile_evidence.include?(evidence)
+  end
+end
+
 archive_status = ''
 if File.exist?('ARCHIVE_STATUS.md')
   archive_status = File.read('ARCHIVE_STATUS.md')
@@ -322,6 +379,10 @@ end
 security = File.read('SECURITY.md')
 failures << 'SECURITY.md must document local-only HTTP server scope' unless security.include?('local-only HTTP')
 failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK integrations' unless security.include?('not Parse SDK')
+
+%w[README.md SECURITY.md VISION.md CHANGES.md].each do |path|
+  failures << "#{path} must document the Java source compile gate" unless File.read(path).include?('Java source compile gate')
+end
 
 [readme, archive_status, security, File.read('VISION.md'), File.read('CHANGES.md')].each_with_index do |document, index|
   failures << "archive document #{index + 1} must mention the gem package build contract" unless document.include?('gem package build contract')

@@ -6,6 +6,11 @@ The supported security scope for `RubyImpJSON` is the current default branch, `m
 
 Project summary: No GitHub description is currently set.
 
+The Java source compile gate verifies the exact `jruby-core` 1.7.27 jar hash
+before compiling archived sources into a temporary directory. Compiled classes
+and dependency jars must never be committed or used to imply that the archived
+runtime is safe for production.
+
 ## Reporting a Vulnerability
 
 Please report suspected vulnerabilities through GitHub's private vulnerability reporting or by opening a draft GitHub Security Advisory for `garethpaul/RubyImpJSON` when that option is available. If GitHub does not show a private reporting option for this repository, contact the repository owner through GitHub and avoid posting exploit details publicly until the issue can be assessed.
