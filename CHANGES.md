@@ -1,5 +1,36 @@
 # Changes
 
+## 2026-06-16
+
+- Added a Java source compile gate that verifies the pinned JRuby 1.7.27 API,
+  compiles all twelve archived extension sources with Java 8 compatibility,
+  and leaves no class files in the checkout.
+
+## 2026-06-14
+
+- Made the loopback server resolve archived JSON load paths from its own
+  location instead of silently loading the system gem from external callers.
+
+## 2026-06-13
+
+- Restricted the archived servlet to the exact `/json` path while preserving
+  query strings and rejecting descendants before payload generation.
+- Added explicit UTF-8, no-store, and nosniff headers to the loopback `/json`
+  response and required them through the executable archive test.
+
+## 2026-06-12
+
+- Added an executable `/json` response test for the loopback-only WEBrick demo,
+  including status, content type, counter, timestamp, and Unicode payload checks.
+- Hardened hosted validation with credential-free checkout, exact release
+  pinning, strict action/permission/trigger contracts, and all-branch push runs.
+- Recorded CVE-2013-0269 and CVE-2020-10663 against archived `json` 1.7.5,
+  successful gem builds, and the explicit non-production package policy.
+- Added a dependency-free gem package build contract for all three archived
+  gemspecs with metadata, payload, archive-path, and artifact-cleanup checks.
+- Declared the preserved Ruby or GPL-2.0-only package metadata, included both
+  JRuby license texts, and bounded the `permutation` development dependency.
+
 ## 2026-06-10
 
 - Bound the historical WEBrick example server to loopback and documented it as

@@ -14,6 +14,8 @@ should stay constrained to loopback and documented as local-only HTTP.
 - Changed the printed URL to `http://127.0.0.1:<port>`.
 - Made the helper loadable without starting its process and added a regression
   test for both configured and actual listening socket addresses.
+- Started the server in an isolated subprocess test and verified `/json`
+  returns a successful JSON response with the archived Unicode payload.
 - Documented that Prototype `parseQuery` and Java `parseObject` references are
   historical parser/prototype names, not Parse SDK/backend integrations.
 - Extended archive metadata checks so the local-only server boundary stays

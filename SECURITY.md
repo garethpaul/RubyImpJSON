@@ -6,6 +6,11 @@ The supported security scope for `RubyImpJSON` is the current default branch, `m
 
 Project summary: No GitHub description is currently set.
 
+The Java source compile gate verifies the exact `jruby-core` 1.7.27 jar hash
+before compiling archived sources into a temporary directory. Compiled classes
+and dependency jars must never be committed or used to imply that the archived
+runtime is safe for production.
+
 ## Reporting a Vulnerability
 
 Please report suspected vulnerabilities through GitHub's private vulnerability reporting or by opening a draft GitHub Security Advisory for `garethpaul/RubyImpJSON` when that option is available. If GitHub does not show a private reporting option for this repository, contact the repository owner through GitHub and avoid posting exploit details publicly until the issue can be assessed.
@@ -40,6 +45,12 @@ The historical `tools/server.rb` WEBrick example should keep its port handling
 explicit so local test runs do not silently ignore caller-selected ports.
 It is a local-only HTTP archive demo and should stay bound to loopback unless a
 dedicated service design is added.
+Its `/json` response should retain explicit UTF-8, `Cache-Control: no-store`,
+`X-Content-Type-Options: nosniff`, and `Referrer-Policy: no-referrer` headers.
+Only a literal `/json` request target with an optional query is accepted;
+encoded, duplicate-slash, traversal, and descendant aliases are rejected.
+Static demo responses are limited to regular non-symlink files below 1 MiB
+inside a real document-root directory.
 Parser fixture classification should use fixture basenames so checkout paths
 cannot silently move malformed inputs into the passing corpus.
 The historical `tools/fuzz.rb` example should reject invalid count arguments
@@ -49,9 +60,18 @@ parser/prototype helper names, not Parse SDK or backend integrations.
 
 ## Dependency and Supply Chain Security
 
+Archived `json` 1.7.5 is affected by CVE-2013-0269 and CVE-2020-10663. This
+repository is retained for historical verification, not production use. New
+applications should use a currently supported JSON implementation.
+
 Hosted archive validation installs no project dependencies, grants only read
 access to repository contents, and pins both the Ruby image and checkout action
-immutably.
+immutably. Checkout credentials are not persisted after source retrieval.
+The gem package build contract writes only to a temporary directory, rejects
+unsafe archive paths, and verifies that no `.gem` artifact is left in the
+repository. It also verifies the preserved Ruby or GPL-2.0-only metadata and
+the bounded `permutation ~> 0.1` development requirement. It is packaging
+validation, not a publication or support claim.
 
 Dependency updates should come from trusted package managers and should keep lockfiles in sync when lockfiles exist. Do not commit credentials, private keys, tokens, generated secrets, or machine-local configuration. If a vulnerability depends on a compromised package, typosquatting risk, insecure transitive dependency, or unsafe build step, include the package name, affected version, and the path through which it is used.
 
