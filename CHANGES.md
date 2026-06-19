@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-19
+
+- Bounded the pure package's maintenance Rake dependency to patched
+  `~> 13.4.2`, excluding CVE-2020-8130 without changing the archived parser.
+
 ## 2026-06-16
 
 - Added a Java source compile gate that verifies the pinned JRuby 1.7.27 API,

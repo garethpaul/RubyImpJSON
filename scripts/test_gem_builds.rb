@@ -17,6 +17,7 @@ PACKAGES = [
     :platform => 'ruby',
     :licenses => ['GPL-2.0-only', 'Ruby'],
     :permutation => '~> 0.1',
+    :rake => nil,
     :required => ['lib/json.rb', 'tests/fixtures/fail29.json', 'ext/json/ext/parser/parser.c']
   },
   {
@@ -26,6 +27,7 @@ PACKAGES = [
     :platform => 'ruby',
     :licenses => ['GPL-2.0-only', 'Ruby'],
     :permutation => '~> 0.1',
+    :rake => '~> 13.4.2',
     :required => ['lib/json.rb', 'lib/json/pure/parser.rb', 'tests/fixtures/fail29.json']
   },
   {
@@ -35,6 +37,7 @@ PACKAGES = [
     :platform => 'java',
     :licenses => ['GPL-2.0-only', 'Ruby'],
     :permutation => nil,
+    :rake => nil,
     :required => ['lib/json.rb', 'lib/json/ext.rb', 'tests/fixtures/fail29.json', 'COPYING-json-jruby', 'GPL']
   }
 ].freeze
@@ -69,8 +72,10 @@ def validate_generator_source
   source = ROOT.join('Rakefile').read
   licenses = "s.licenses = ['Ruby', 'GPL-2.0-only']"
   permutation = "s.add_development_dependency 'permutation', '~> 0.1'"
+  rake = "s.add_development_dependency 'rake', '~> 13.4.2'"
   abort 'Rakefile gemspec generators must preserve dual-license metadata' unless source.scan(licenses).length == 2
   abort 'Rakefile gemspec generators must preserve bounded permutation metadata' unless source.scan(permutation).length == 2
+  abort 'Rakefile pure gem generator must preserve patched bounded rake metadata' unless source.scan(rake).length == 1
 end
 
 repository_gems_before = Dir[ROOT.join('*.gem').to_s].sort
@@ -111,6 +116,15 @@ Dir.mktmpdir('rubyimpjson-gems') do |directory|
       end
     elsif permutation
       abort "#{expected[:gemspec]} must not add a permutation dependency"
+    end
+
+    rake = specification.dependencies.find { |dependency| dependency.name == 'rake' }
+    if expected[:rake]
+      unless rake && rake.type == :development && rake.requirement.to_s == expected[:rake]
+        abort "#{expected[:gemspec]} must retain patched bounded development dependency rake #{expected[:rake]}"
+      end
+    elsif rake
+      abort "#{expected[:gemspec]} must not add a rake dependency"
     end
 
     validate_contents(expected[:gemspec], package.contents, expected[:required])

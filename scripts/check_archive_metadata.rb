@@ -54,7 +54,7 @@ if File.exist?(hosted_validation_workflow)
     'run: make check',
     'java-archive:',
     'name: Java 8 archived source compilation',
-    'uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00',
+    'uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287',
     'distribution: temurin',
     "java-version: '8'",
     'run: gem install --user-install --no-document jruby-jars -v 1.7.27',
@@ -66,7 +66,7 @@ if File.exist?(hosted_validation_workflow)
   expected_actions = [
     ['actions/checkout', '9f698171ed81b15d1823a05fc7211befd50c8ae0'],
     ['actions/checkout', '9f698171ed81b15d1823a05fc7211befd50c8ae0'],
-    ['actions/setup-java', 'c5195efecf7bdfc987ee8bae7a71cb8b11521c00']
+    ['actions/setup-java', 'ad2b38190b15e4d6bdf0c97fb4fca8412226d287']
   ]
   failures << "#{hosted_validation_workflow} must use only the approved checkout and Java setup actions" unless actions == expected_actions
 
@@ -270,6 +270,14 @@ unless rakefile_source.scan("s.licenses = ['Ruby', 'GPL-2.0-only']").length == 2
 end
 unless rakefile_source.scan("s.add_development_dependency 'permutation', '~> 0.1'").length == 2
   failures << 'Rakefile gemspec generators must bound permutation to ~> 0.1'
+end
+unless rakefile_source.scan("s.add_development_dependency 'rake', '~> 13.4.2'").length == 1
+  failures << 'Rakefile pure gem generator must bound rake to patched ~> 13.4.2'
+end
+
+pure_gemspec = File.read('json_pure.gemspec')
+unless pure_gemspec.scan('["~> 13.4.2"]').length == 3
+  failures << 'json_pure.gemspec must bound every rake dependency branch to patched ~> 13.4.2'
 end
 
 makefile = File.read('Makefile')

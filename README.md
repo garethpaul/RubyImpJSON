@@ -69,7 +69,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   native, pure-Ruby, and Java gemspecs in a temporary directory, checks package
   metadata and representative payloads, and leaves no `.gem` artifacts. The
   contract verifies Ruby or GPL-2.0-only license and dependency metadata,
-  including the bounded `permutation ~> 0.1` development requirement.
+  including bounded `permutation ~> 0.1` and patched `rake ~> 13.4.2`
+  development requirements for the maintained Ruby 2.7 boundary.
 - Install `jruby-jars 1.7.27`, select Java 8, and run `make java-check` to use
   the Java source compile gate. It verifies the exact historical JRuby API jar,
   compiles all twelve archived extension sources into a temporary directory,

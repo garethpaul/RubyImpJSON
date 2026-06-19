@@ -32,6 +32,7 @@ deploy or newly depend on this snapshot.
   metadata, representative payload, archive-path, and artifact-cleanup checks
 - Ruby or GPL-2.0-only package metadata, packaged license texts, and a bounded
   `permutation ~> 0.1` development dependency for the native and pure gems
+- Patched bounded `rake ~> 13.4.2` metadata for the maintained pure package
 
 ## Verification Baseline
 

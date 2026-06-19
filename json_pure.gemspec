@@ -26,15 +26,15 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<permutation>, ["~> 0.1"])
       s.add_development_dependency(%q<sdoc>, ["~> 0.3.16"]) if RUBY_VERSION > "1.8.6"
-      s.add_development_dependency(%q<rake>, ["~> 0.9.2"])
+      s.add_development_dependency(%q<rake>, ["~> 13.4.2"])
     else
       s.add_dependency(%q<permutation>, ["~> 0.1"])
       s.add_dependency(%q<sdoc>, ["~> 0.3.16"]) if RUBY_VERSION > "1.8.6"
-      s.add_dependency(%q<rake>, ["~> 0.9.2"])
+      s.add_dependency(%q<rake>, ["~> 13.4.2"])
     end
   else
     s.add_dependency(%q<permutation>, ["~> 0.1"])
     s.add_dependency(%q<sdoc>, ["~> 0.3.16"]) if RUBY_VERSION > "1.8.6"
-    s.add_dependency(%q<rake>, ["~> 0.9.2"])
+    s.add_dependency(%q<rake>, ["~> 13.4.2"])
   end
 end

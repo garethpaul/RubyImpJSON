@@ -90,7 +90,7 @@ if defined?(Gem) and defined?(Gem::PackageTask)
     s.require_path = 'lib'
     s.add_development_dependency 'permutation', '~> 0.1'
     s.add_development_dependency 'sdoc', '~> 0.3.16'
-    s.add_development_dependency 'rake', '~>0.9.2'
+    s.add_development_dependency 'rake', '~> 13.4.2'
 
     s.extra_rdoc_files << 'README.rdoc'
     s.rdoc_options <<
