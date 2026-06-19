@@ -271,6 +271,14 @@ end
 unless rakefile_source.scan("s.add_development_dependency 'permutation', '~> 0.1'").length == 2
   failures << 'Rakefile gemspec generators must bound permutation to ~> 0.1'
 end
+unless rakefile_source.scan("s.add_development_dependency 'rake', '~> 13.4.2'").length == 1
+  failures << 'Rakefile pure gem generator must bound rake to patched ~> 13.4.2'
+end
+
+pure_gemspec = File.read('json_pure.gemspec')
+unless pure_gemspec.scan('["~> 13.4.2"]').length == 3
+  failures << 'json_pure.gemspec must bound every rake dependency branch to patched ~> 13.4.2'
+end
 
 makefile = File.read('Makefile')
 root_declaration = 'override ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))'
