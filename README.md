@@ -97,8 +97,12 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
   `127.0.0.1`; it is not a production network integration.
 - The pure-Ruby test corpus starts the loopback server and verifies that
   the exact `/json` path returns the archived JSON and Unicode payload with
-  explicit UTF-8, no-store, and nosniff response headers while descendants
-  return not found.
+  explicit UTF-8, no-store, nosniff, and no-referrer response headers while
+  encoded, duplicate-slash, traversal, and descendant aliases return not
+  found without mutating the demo counter.
+- Static demo files are limited to regular non-symlink entries below 1 MiB in
+  the selected document root. Error and static responses retain the same
+  no-store, nosniff, and no-referrer policy as `/json`.
 - Absolute server loads resolve `lib` and `ext` from the checkout, so an
   external caller cannot silently substitute the system JSON gem.
 - The archive metadata check keeps the example fuzzer's frequency bucket
@@ -169,6 +173,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   caller-resistant, location-independent archive verification root.
 - See `docs/plans/2026-06-14-server-repository-load-path.md` for
   caller-directory independent loading of the archived JSON implementation.
+- See `docs/plans/2026-06-19-deep-review-server-hardening.md` for canonical
+  request-target and static-file boundary hardening.
 - See `docs/plans/2026-06-16-java-source-compile-gate.md` for the pinned Java 8
   compiler boundary for the archived JRuby extension sources.
 

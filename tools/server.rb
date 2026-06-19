@@ -8,6 +8,41 @@ $:.unshift File.join(archive_root, 'ext')
 $:.unshift File.join(archive_root, 'lib')
 require 'json'
 
+MAX_STATIC_FILE_BYTES = 1024 * 1024
+
+def raw_request_path(req)
+  request_target = req.request_line.to_s.split(' ', 3)[1]
+  raise HTTPStatus::BadRequest, 'missing request target' unless request_target
+
+  request_target.split('?', 2).first
+end
+
+def validate_document_root(dir)
+  expanded = File.expand_path(dir)
+  stat = File.lstat(expanded)
+  unless stat.directory? && !stat.symlink?
+    raise ArgumentError, "document root must be a real directory: #{expanded}"
+  end
+  File.realpath(expanded)
+rescue Errno::ENOENT, Errno::EACCES, Errno::ENOTDIR
+  raise ArgumentError, "document root is unavailable: #{expanded}"
+end
+
+def validate_document_path(root, path, type)
+  expanded = File.expand_path(path)
+  stat = File.lstat(expanded)
+  real = File.realpath(expanded)
+  inside_root = real == root || real.start_with?(root + File::SEPARATOR)
+  valid_type = type == :directory ? stat.directory? : stat.file?
+
+  raise HTTPStatus::NotFound unless inside_root && real == expanded && !stat.symlink? && valid_type
+  if type == :file && stat.size > MAX_STATIC_FILE_BYTES
+    raise HTTPStatus::RequestEntityTooLarge, 'static demo file is too large'
+  end
+rescue Errno::ENOENT, Errno::EACCES, Errno::ELOOP, Errno::ENOTDIR
+  raise HTTPStatus::NotFound
+end
+
 class JSONServlet < HTTPServlet::AbstractServlet
   @@count = 1
 
@@ -37,13 +72,38 @@ class JSONServlet < HTTPServlet::AbstractServlet
 end
 
 def create_server(err, dir, port)
-  dir = File.expand_path(dir)
+  dir = validate_document_root(dir)
   err.puts "Local JSON demo:", "http://127.0.0.1:#{port}"
+
+  request_callback = proc do |req, res|
+    res['Cache-Control'] = 'no-store'
+    res['X-Content-Type-Options'] = 'nosniff'
+    res['Referrer-Policy'] = 'no-referrer'
+
+    path = raw_request_path(req)
+    decoded_path = HTTPUtils.unescape(path)
+    if path != '/json' && (req.path == '/json' || decoded_path.start_with?('/json'))
+      raise HTTPStatus::NotFound
+    end
+  end
+
+  directory_callback = proc do |_req, res|
+    validate_document_path(dir, res.filename, :directory)
+  end
+
+  file_callback = proc do |_req, res|
+    validate_document_path(dir, res.filename, :file)
+  end
 
   s = HTTPServer.new(
     :Port         => port,
     :BindAddress  => '127.0.0.1',
     :DocumentRoot => dir,
+    :DocumentRootOptions => {
+      :DirectoryCallback => directory_callback,
+      :FileCallback      => file_callback
+    },
+    :RequestCallback => request_callback,
     :Logger       => WEBrick::Log.new(err),
     :AccessLog    => [
       [ err, WEBrick::AccessLog::COMMON_LOG_FORMAT  ],
