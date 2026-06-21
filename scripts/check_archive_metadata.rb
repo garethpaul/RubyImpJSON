@@ -308,7 +308,7 @@ unless makefile.include?('java-check:') &&
 end
 
 root_test = File.read('scripts/test-makefile-root.sh')
-['77 executed target/authority cases', '2 MAKEFILE_LIST rejections', 'detected MAKEFILES preload startup', '2 multi-Makefile rejections', '1 dollar-path fail-closed case'].each do |fragment|
+['77 executed target/authority cases', '2 MAKEFILE_LIST rejections', 'detected MAKEFILES preload startup', '2 multi-Makefile rejections', '1 dollar-path non-execution case'].each do |fragment|
   failures << "Makefile root test must preserve #{fragment.inspect}" unless root_test.include?(fragment)
 end
 
