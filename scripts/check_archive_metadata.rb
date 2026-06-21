@@ -284,14 +284,16 @@ makefile = File.read('Makefile')
 [
   'override SHELL := /bin/sh',
   'override .SHELLFLAGS := -c',
+  '.SECONDEXPANSION:',
   'override RUBY := ruby',
   'override JAVAC := javac',
   '$(error MAKEFILES must be empty; repository verification requires this Makefile to be loaded alone)',
   '$(error MAKEFILE_LIST must not be overridden)',
-  'override ROOT := $(shell path=',
+  'override ROOT := $(shell sed_path=/usr/bin/sed;',
   '[ -f "$$path" ] || exit 1',
   'export ROOT',
   '$(error repository Makefile path could not be resolved)',
+  '$(error repository Makefile must be loaded alone)',
   '"$$ROOT/scripts/test-makefile-root.sh"'
 ].each do |fragment|
   failures << "Makefile must preserve authority contract #{fragment.inspect}" unless makefile.include?(fragment)
@@ -306,7 +308,7 @@ unless makefile.include?('java-check:') &&
 end
 
 root_test = File.read('scripts/test-makefile-root.sh')
-['77 executed target/authority cases', '2 MAKEFILE_LIST rejections', '1 MAKEFILES rejection', '1 multi-Makefile rejection'].each do |fragment|
+['77 executed target/authority cases', '2 MAKEFILE_LIST rejections', 'detected MAKEFILES preload startup', '2 multi-Makefile rejections', '1 dollar-path fail-closed case'].each do |fragment|
   failures << "Makefile root test must preserve #{fragment.inspect}" unless root_test.include?(fragment)
 end
 
@@ -363,7 +365,7 @@ end
 safe_make_plan = 'docs/plans/2026-06-21-safe-make-authority.md'
 if File.exist?(safe_make_plan)
   evidence = File.read(safe_make_plan)
-  ['77 executed target, root, shell, Ruby, and Java authority cases', 'Both `MAKEFILE_LIST` override channels', '`MAKEFILES` preload', 'ambiguous multiple-Makefile invocation failed closed'].each do |fragment|
+  ['77 executed target, root, shell, Ruby, and Java authority cases', 'Both `MAKEFILE_LIST` override channels', 'parsed `MAKEFILES` preload', 'preceding and trailing multiple-Makefile invocations failed'].each do |fragment|
     failures << "#{safe_make_plan} must record #{fragment.inspect}" unless evidence.include?(fragment)
   end
 else

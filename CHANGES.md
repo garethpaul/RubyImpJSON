@@ -2,8 +2,8 @@
 
 ## 2026-06-21
 
-- Hardened Make verification for spaced paths and caller-controlled root,
-  Ruby, Java, shell, preload, and Makefile-list authority.
+- Hardened Make verification for spaced paths, portable `sed` discovery,
+  explicit root/runtime/shell overrides, and preceding or trailing Makefiles.
 
 ## 2026-06-19
 
