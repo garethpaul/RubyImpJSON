@@ -281,18 +281,35 @@ unless pure_gemspec.scan('["~> 13.4.2"]').length == 3
 end
 
 makefile = File.read('Makefile')
-root_declaration = 'override ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))'
-root_assignments = makefile.lines.map(&:chomp).grep(/\A(?:override\s+)?ROOT\s*[:?+]?=/)
-unless makefile.start_with?("#{root_declaration}\n") && root_assignments == [root_declaration]
-  failures << 'Makefile must define exactly one protected repository-derived ROOT declaration first'
+[
+  'override SHELL := /bin/sh',
+  'override .SHELLFLAGS := -c',
+  '.SECONDEXPANSION:',
+  'override RUBY := ruby',
+  'override JAVAC := javac',
+  '$(error MAKEFILES must be empty; repository verification requires this Makefile to be loaded alone)',
+  '$(error MAKEFILE_LIST must not be overridden)',
+  'override ROOT := $(shell sed_path=/usr/bin/sed;',
+  '[ -f "$$path" ] || exit 1',
+  'export ROOT',
+  '$(error repository Makefile path could not be resolved)',
+  '$(error repository Makefile must be loaded alone)',
+  '"$$ROOT/scripts/test-makefile-root.sh"'
+].each do |fragment|
+  failures << "Makefile must preserve authority contract #{fragment.inspect}" unless makefile.include?(fragment)
 end
-unless makefile.include?('cd "$(ROOT)" && $(RUBY) scripts/test_gem_builds.rb')
+unless makefile.include?('cd "$$ROOT" && $(RUBY) scripts/test_gem_builds.rb')
   failures << 'Makefile build must run the gem package build contract from ROOT'
 end
 unless makefile.include?('java-check:') &&
-       makefile.include?('JAVAC ?= javac') &&
-       makefile.include?('cd "$(ROOT)" && JAVAC="$(JAVAC)" $(RUBY) scripts/check_java_sources.rb')
+       makefile.include?('override JAVAC := javac') &&
+       makefile.include?('cd "$$ROOT" && JAVAC="$(JAVAC)" $(RUBY) scripts/check_java_sources.rb')
   failures << 'Makefile must expose the repository-rooted Java source compile gate'
+end
+
+root_test = File.read('scripts/test-makefile-root.sh')
+['77 executed target/authority cases', '2 MAKEFILE_LIST rejections', 'detected MAKEFILES preload startup', '2 multi-Makefile rejections', '1 dollar-path non-execution case'].each do |fragment|
+  failures << "Makefile root test must preserve #{fragment.inspect}" unless root_test.include?(fragment)
 end
 
 if File.exist?(java_compile_check)
@@ -343,6 +360,16 @@ if File.exist?(make_root_plan)
   ].each do |evidence|
     failures << "#{make_root_plan} must record verification evidence #{evidence.inspect}" unless root_plan.include?(evidence)
   end
+end
+
+safe_make_plan = 'docs/plans/2026-06-21-safe-make-authority.md'
+if File.exist?(safe_make_plan)
+  evidence = File.read(safe_make_plan)
+  ['77 executed target, root, shell, Ruby, and Java authority cases', 'Both `MAKEFILE_LIST` override channels', 'parsed `MAKEFILES` preload', 'preceding and trailing multiple-Makefile invocations failed'].each do |fragment|
+    failures << "#{safe_make_plan} must record #{fragment.inspect}" unless evidence.include?(fragment)
+  end
+else
+  failures << "#{safe_make_plan} is missing"
 end
 
 if File.exist?(server_load_path_plan)

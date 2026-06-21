@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-21
+
+- Hardened Make verification for spaced paths, portable `sed` discovery,
+  explicit root/runtime/shell overrides, and preceding or trailing Makefiles.
+
 ## 2026-06-19
 
 - Bounded the pure package's maintenance Rake dependency to patched
