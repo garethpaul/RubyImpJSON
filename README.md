@@ -172,6 +172,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   dual-license declarations, bounded development resolution, and warning checks.
 - See `docs/plans/2026-06-14-make-root-override-protection.md` for the
   caller-resistant, location-independent archive verification root.
+- See `docs/plans/2026-06-21-safe-make-authority.md` for canonical handling of
+  hostile checkout paths and caller-controlled Make verification authority.
 - See `docs/plans/2026-06-14-server-repository-load-path.md` for
   caller-directory independent loading of the archived JSON implementation.
 - See `docs/plans/2026-06-19-deep-review-server-hardening.md` for canonical
