@@ -35,6 +35,8 @@ Priority:
 - Keep the local `/json` response covered by executable archive tests
 - Keep the exact `/json` path distinct from rejected descendant routes
 - Keep explicit UTF-8, no-store, and nosniff headers on the local JSON response
+- Keep local request targets, query values, referrers, and user agents out of
+  WEBrick access logs
 - Keep fuzzer frequency selection tied to the sampled random value
 - Keep fuzzer count arguments validated before payload generation
 - Keep completed maintenance plans under `docs/plans`

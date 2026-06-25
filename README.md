@@ -94,6 +94,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - The archive metadata check keeps the example WEBrick server wired to its
   parsed command-line port and validates that port arguments are integers in
   the TCP port range.
+- The loopback demo disables WEBrick access logs so request targets, query
+  values, referrers, and user-agent strings are not written to its error log.
 - The example WEBrick server is a local-only HTTP archive demo bound to
   `127.0.0.1`; it is not a production network integration.
 - The pure-Ruby test corpus starts the loopback server and verifies that
@@ -180,6 +182,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   request-target and static-file boundary hardening.
 - See `docs/plans/2026-06-16-java-source-compile-gate.md` for the pinned Java 8
   compiler boundary for the archived JRuby extension sources.
+- See `docs/plans/2026-06-25-local-server-access-log-privacy.md` for the
+  request-metadata logging boundary of the local-only demo.
 
 ## Contributing
 

@@ -17,6 +17,7 @@ gem_metadata_plan = 'docs/plans/2026-06-12-gem-license-dependency-metadata.md'
 make_root_plan = 'docs/plans/2026-06-14-make-root-override-protection.md'
 server_load_path_plan = 'docs/plans/2026-06-14-server-repository-load-path.md'
 java_compile_plan = 'docs/plans/2026-06-16-java-source-compile-gate.md'
+access_log_plan = 'docs/plans/2026-06-25-local-server-access-log-privacy.md'
 java_compile_check = 'scripts/check_java_sources.rb'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
@@ -29,6 +30,7 @@ failures << "#{gem_metadata_plan} is missing" unless File.exist?(gem_metadata_pl
 failures << "#{make_root_plan} is missing" unless File.exist?(make_root_plan)
 failures << "#{server_load_path_plan} is missing" unless File.exist?(server_load_path_plan)
 failures << "#{java_compile_plan} is missing" unless File.exist?(java_compile_plan)
+failures << "#{access_log_plan} is missing" unless File.exist?(access_log_plan)
 failures << "#{java_compile_check} is missing" unless File.exist?(java_compile_check)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
@@ -180,6 +182,12 @@ unless server.include?("archive_root = File.expand_path('..', __dir__)") &&
        server.include?("$:.unshift File.join(archive_root, 'lib')")
   failures << 'tools/server.rb must load archived JSON relative to itself'
 end
+unless server.include?(':AccessLog    => []') &&
+       !server.include?('WEBrick::AccessLog::COMMON_LOG_FORMAT') &&
+       !server.include?('WEBrick::AccessLog::REFERER_LOG_FORMAT') &&
+       !server.include?('WEBrick::AccessLog::AGENT_LOG_FORMAT')
+  failures << 'tools/server.rb must not log local request targets, referrers, or user agents'
+end
 
 server_test = 'tests/test_server.rb'
 if File.exist?(server_test)
@@ -197,12 +205,28 @@ if File.exist?(server_test)
          server_test_source.include?("descendant must not be JSON") &&
          server_test_source.include?("rejected descendant incremented the counter") &&
          server_test_source.include?('test_absolute_server_load_uses_archived_json_outside_checkout') &&
+         server_test_source.include?('test_local_demo_does_not_log_request_metadata') &&
+         server_test_source.include?("request['Referer'] = 'https://private.example/account'") &&
+         server_test_source.include?("request['User-Agent'] = 'private-agent-value'") &&
+         server_test_source.include?('request metadata leaked to the local log') &&
          server_test_source.include?("JSON::VERSION == '1.7.5'") &&
          server_test_source.include?(':chdir => Dir.tmpdir')
     failures << "#{server_test} must verify loopback binding and the JSON endpoint response"
   end
 else
   failures << "#{server_test} is missing"
+end
+
+if File.exist?(access_log_plan)
+  access_log_evidence = File.read(access_log_plan)
+  [
+    'Status: Completed',
+    'pinned Ruby 2.7 focused regression passed',
+    'repository and external-directory `make check` passed',
+    'Four hostile access-log mutations were rejected'
+  ].each do |evidence|
+    failures << "#{access_log_plan} must record verification evidence #{evidence.inspect}" unless access_log_evidence.include?(evidence)
+  end
 end
 
 fuzzer = File.read('tools/fuzz.rb')

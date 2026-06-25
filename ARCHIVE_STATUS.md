@@ -25,6 +25,8 @@ deploy or newly depend on this snapshot.
 - Example WEBrick `/json` status, content type, and archived payload behavior
 - Example WEBrick `/json` UTF-8, no-store, and nosniff response headers
 - Example WEBrick canonical raw `/json` routing and shared no-referrer policy
+- Example WEBrick access logging disabled for request-target, query, referrer,
+  and user-agent privacy
 - Example WEBrick document-root type, symlink, and 1 MiB file-size boundaries
 - Example fuzzer frequency selection tied to the sampled random value
 - Example fuzzer count validation for positive integer payload counts
