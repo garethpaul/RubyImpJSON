@@ -49,6 +49,8 @@ Its `/json` response should retain explicit UTF-8, `Cache-Control: no-store`,
 `X-Content-Type-Options: nosniff`, and `Referrer-Policy: no-referrer` headers.
 Only a literal `/json` request target with an optional query is accepted;
 encoded, duplicate-slash, traversal, and descendant aliases are rejected.
+WEBrick access logging stays disabled so local request targets, query values,
+referrers, and user-agent strings are not persisted to the demo error stream.
 Static demo responses are limited to regular non-symlink files below 1 MiB
 inside a real document-root directory.
 Parser fixture classification should use fixture basenames so checkout paths

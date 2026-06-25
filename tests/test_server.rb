@@ -103,6 +103,46 @@ RUBY
     assert_predicate status, :success?, stderr
   end
 
+  def test_local_demo_does_not_log_request_metadata
+    script = <<'RUBY'
+require 'net/http'
+require 'stringio'
+require './tools/server'
+
+log = StringIO.new
+server = create_server(log, File.expand_path('data'), 0)
+thread = Thread.new { server.start }
+begin
+  port = server.listeners.first.addr[1]
+  http = Net::HTTP.new('127.0.0.1', port, nil)
+  request = Net::HTTP::Get.new('/json?token=private-query-value')
+  request['Referer'] = 'https://private.example/account'
+  request['User-Agent'] = 'private-agent-value'
+  response = http.request(request)
+  raise "unexpected status #{response.code}" unless response.code == '200'
+ensure
+  server.shutdown
+  thread.join
+end
+
+output = log.string
+['private-query-value', 'private.example', 'private-agent-value'].each do |secret|
+  raise "request metadata leaked to the local log: #{secret}" if output.include?(secret)
+end
+RUBY
+
+    _stdout, stderr, status = Open3.capture3(
+      { 'JSON' => 'pure' },
+      RbConfig.ruby,
+      '-Ilib',
+      '-e',
+      script,
+      :chdir => File.expand_path('..', __dir__)
+    )
+
+    assert_predicate status, :success?, stderr
+  end
+
   def test_json_endpoint_rejects_noncanonical_request_targets
     script = <<'RUBY'
 require 'json'

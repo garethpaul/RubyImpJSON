@@ -1,5 +1,31 @@
 # Changes
 
+## 2026-06-25T13:09:56-07:00 — P2 local-demo access-log privacy
+
+- Cycle: inspected the explicitly licensed historical archive, existing plans,
+  open work, recent hardening, server behavior, verification authority, and
+  hosted boundaries before changing the optional loopback demo.
+- Threads: prioritized privacy over parser modernization because archived
+  `json` 1.7.5 is intentionally non-production while the maintained demo was
+  still persisting accepted query values, referrers, and user-agent strings.
+- Bug: WEBrick common, referrer, and agent access logs wrote caller-controlled
+  request metadata to the diagnostic stream even though the demo needs only
+  error logging.
+- Files: changed `tools/server.rb`, `tests/test_server.rb`,
+  `scripts/check_archive_metadata.rb`, archive/security/vision/README guidance,
+  and `docs/plans/2026-06-25-local-server-access-log-privacy.md`.
+- Validation: the pre-fix pinned Ruby 2.7 regression failed on a logged query
+  token; the fix passed all seven server tests and four hostile mutations for
+  common, referrer, agent, and missing-regression behavior. Root and external
+  pinned-runtime `make check` each passed 69 tests, 2,019 assertions, 77 Make
+  authority cases, archive metadata checks, and three temporary gem builds.
+- Blockers: the host has no Ruby executable, so all Ruby behavior runs in the
+  same digest-pinned Ruby 2.7 container used by CI; JRuby runtime behavior is
+  outside this privacy-only change.
+- Next: require hosted archive and Java checks plus clean exact-head Codex
+  review before merge; continue preserving error diagnostics without routine
+  request metadata.
+
 ## 2026-06-21
 
 - Hardened Make verification for spaced paths, portable `sed` discovery,

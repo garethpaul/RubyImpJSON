@@ -105,11 +105,7 @@ def create_server(err, dir, port)
     },
     :RequestCallback => request_callback,
     :Logger       => WEBrick::Log.new(err),
-    :AccessLog    => [
-      [ err, WEBrick::AccessLog::COMMON_LOG_FORMAT  ],
-      [ err, WEBrick::AccessLog::REFERER_LOG_FORMAT ],
-      [ err, WEBrick::AccessLog::AGENT_LOG_FORMAT   ]
-    ]
+    :AccessLog    => []
   )
   s.mount("/json", JSONServlet)
   s
