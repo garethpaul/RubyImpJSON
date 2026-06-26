@@ -31,6 +31,7 @@ Priority:
 - Keep README maintenance notes linked to every canonical plan
 - Keep historical example tools wired to their documented arguments
 - Keep example server port arguments validated before startup
+- Keep the local startup URL aligned with WEBrick's actual bound port
 - Keep the historical WEBrick HTTP example bound to loopback
 - Keep the local `/json` response covered by executable archive tests
 - Keep the exact `/json` path distinct from rejected descendant routes

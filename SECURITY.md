@@ -43,6 +43,8 @@ For web services, APIs, sockets, or scraping workflows, prioritize reports invol
 
 The historical `tools/server.rb` WEBrick example should keep its port handling
 explicit so local test runs do not silently ignore caller-selected ports.
+Its startup message should advertise the port WEBrick actually bound rather
+than an unusable port `0` placeholder.
 It is a local-only HTTP archive demo and should stay bound to loopback unless a
 dedicated service design is added.
 Its `/json` response should retain explicit UTF-8, `Cache-Control: no-store`,

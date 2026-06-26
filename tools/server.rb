@@ -73,7 +73,6 @@ end
 
 def create_server(err, dir, port)
   dir = validate_document_root(dir)
-  err.puts "Local JSON demo:", "http://127.0.0.1:#{port}"
 
   request_callback = proc do |req, res|
     res['Cache-Control'] = 'no-store'
@@ -95,7 +94,7 @@ def create_server(err, dir, port)
     validate_document_path(dir, res.filename, :file)
   end
 
-  s = HTTPServer.new(
+  server = HTTPServer.new(
     :Port         => port,
     :BindAddress  => '127.0.0.1',
     :DocumentRoot => dir,
@@ -107,8 +106,10 @@ def create_server(err, dir, port)
     :Logger       => WEBrick::Log.new(err),
     :AccessLog    => []
   )
-  s.mount("/json", JSONServlet)
-  s
+  server.mount("/json", JSONServlet)
+  bound_port = server.listeners.first.addr[1]
+  err.puts "Local JSON demo:", "http://127.0.0.1:#{bound_port}"
+  server
 end
 
 def parse_port(value)

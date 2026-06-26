@@ -1,5 +1,30 @@
 # Changes
 
+## 2026-06-25T17:57:49-07:00 — P2 bound local-demo endpoint advertisement
+
+- Cycle: selected the oldest explicitly licensed repository, confirmed no open
+  work, reviewed the historical archive boundary, and kept scope on the
+  maintained loopback demo rather than modernizing the vulnerable parser.
+- Bug: `create_server(..., 0)` asked WEBrick for an available port but wrote
+  `http://127.0.0.1:0` before the listener existed, so callers received an
+  unusable endpoint and bind failures could be preceded by a misleading URL.
+- Fix: construct and mount the WEBrick server first, read the assigned port
+  from its loopback listener, and only then emit the local startup endpoint.
+- Tests: added a pinned Ruby 2.7 regression that requires a nonzero listener
+  and an advertised URL matching that exact bound port.
+- Contracts: archive metadata now requires the production lookup, executable
+  regression, and completed verification plan while rejecting the old
+  caller-supplied-port interpolation.
+- Validation: the pre-fix focused regression failed with a nonzero listener and
+  advertised port `0`; the post-fix focused test and all eight server tests
+  passed. Three hostile mutations were rejected. Repository and external
+  pinned-runtime `make check` each passed 70 tests, 2,020 assertions, 77 Make
+  authority cases, archive metadata checks, and three temporary gem builds.
+- Blockers: the host has no Ruby executable, so Ruby behavior uses the same
+  digest-pinned Ruby 2.7 image as CI; JRuby runtime behavior is unchanged.
+- Next: require green hosted archive/Java/CodeQL lanes and clean exact-head
+  Codex review before merge.
+
 ## 2026-06-25T13:09:56-07:00 — P2 local-demo access-log privacy
 
 - Cycle: inspected the explicitly licensed historical archive, existing plans,

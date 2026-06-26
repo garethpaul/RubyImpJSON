@@ -21,6 +21,7 @@ deploy or newly depend on this snapshot.
 - README maintenance notes for every canonical `docs/plans` record
 - Example WEBrick server command-line port handling
 - Example WEBrick server port validation for integer TCP port arguments
+- Example WEBrick startup URL aligned with the actual bound loopback port
 - Example WEBrick server local-only HTTP loopback binding
 - Example WEBrick `/json` status, content type, and archived payload behavior
 - Example WEBrick `/json` UTF-8, no-store, and nosniff response headers

@@ -18,6 +18,7 @@ make_root_plan = 'docs/plans/2026-06-14-make-root-override-protection.md'
 server_load_path_plan = 'docs/plans/2026-06-14-server-repository-load-path.md'
 java_compile_plan = 'docs/plans/2026-06-16-java-source-compile-gate.md'
 access_log_plan = 'docs/plans/2026-06-25-local-server-access-log-privacy.md'
+bound_port_plan = 'docs/plans/2026-06-25-local-server-bound-port-advertisement.md'
 java_compile_check = 'scripts/check_java_sources.rb'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
@@ -31,6 +32,7 @@ failures << "#{make_root_plan} is missing" unless File.exist?(make_root_plan)
 failures << "#{server_load_path_plan} is missing" unless File.exist?(server_load_path_plan)
 failures << "#{java_compile_plan} is missing" unless File.exist?(java_compile_plan)
 failures << "#{access_log_plan} is missing" unless File.exist?(access_log_plan)
+failures << "#{bound_port_plan} is missing" unless File.exist?(bound_port_plan)
 failures << "#{java_compile_check} is missing" unless File.exist?(java_compile_check)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
@@ -164,10 +166,12 @@ unless server.include?('def parse_port(value)') &&
   failures << 'tools/server.rb must validate and pass the parsed command-line port to create_server'
 end
 unless server.include?(":BindAddress  => '127.0.0.1'") &&
-       server.include?('"http://127.0.0.1:#{port}"') &&
+       server.include?('bound_port = server.listeners.first.addr[1]') &&
+       server.include?('"http://127.0.0.1:#{bound_port}"') &&
+       !server.include?('"http://127.0.0.1:#{port}"') &&
        server.include?('if $PROGRAM_NAME == __FILE__') &&
        !server.include?('Socket.gethostname')
-  failures << 'tools/server.rb must keep the historical HTTP demo bound to loopback'
+  failures << 'tools/server.rb must advertise its actual loopback listener'
 end
 unless server.include?('res[\'Content-Type\'] = "application/json; charset=utf-8"') &&
        server.include?('res[\'Cache-Control\'] = "no-store"') &&
@@ -205,6 +209,9 @@ if File.exist?(server_test)
          server_test_source.include?("descendant must not be JSON") &&
          server_test_source.include?("rejected descendant incremented the counter") &&
          server_test_source.include?('test_absolute_server_load_uses_archived_json_outside_checkout') &&
+         server_test_source.include?('test_create_server_advertises_the_bound_port') &&
+         server_test_source.include?('server.listeners.first.addr[1]') &&
+         server_test_source.include?('server advertised unusable port zero') &&
          server_test_source.include?('test_local_demo_does_not_log_request_metadata') &&
          server_test_source.include?("request['Referer'] = 'https://private.example/account'") &&
          server_test_source.include?("request['User-Agent'] = 'private-agent-value'") &&
@@ -215,6 +222,18 @@ if File.exist?(server_test)
   end
 else
   failures << "#{server_test} is missing"
+end
+
+if File.exist?(bound_port_plan)
+  bound_port_evidence = File.read(bound_port_plan)
+  [
+    'Status: Completed',
+    'pinned Ruby 2.7 focused regression passed',
+    'repository and external-directory `make check` passed',
+    'hostile bound-port mutations were rejected'
+  ].each do |evidence|
+    failures << "#{bound_port_plan} must record verification evidence #{evidence.inspect}" unless bound_port_evidence.include?(evidence)
+  end
 end
 
 if File.exist?(access_log_plan)
