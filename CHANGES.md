@@ -1,5 +1,29 @@
 # Changes
 
+## 2026-06-26 — Archive runtime reproduction boundaries
+
+- Added a canonical archive reproduction guide that defines the digest-pinned
+  Ruby 2.7 `JSON=pure` gate without presenting it as package support.
+- Clarified that the temporary three-gem package build validates archive
+  contents but does not compile or load the native or JRuby extensions.
+- Documented the native extension as an optional historical experiment and
+  recorded the observed Ruby 2.7 boundary: the parser compiles, while the
+  generator still depends on removed historical C API details.
+- Documented the Java 8 and `jruby-jars 1.7.27` source-compilation procedure and
+  kept it distinct from unverified JRuby extension runtime behavior.
+- Replaced the generic Bundler setup path with the dependency-free maintained
+  verification command and added fail-closed metadata contracts for every
+  runtime-boundary claim.
+- Retired the reproduction-notes and native/JRuby expectation roadmap items;
+  parser fixture security review remains the next priority.
+- Verified repository and external-directory `make check` in the pinned Ruby
+  image: each run passed 70 tests with 2,020 assertions, all three package
+  builds, and 77 Make authority cases. The exact read-only Docker command also
+  passed, and twelve isolated hostile documentation mutations were rejected.
+- Did not run the Java compilation gate locally because this host has Java 11
+  and no Ruby or pinned JRuby API gem; the PR's exact Java 8 hosted job is the
+  required platform result.
+
 ## 2026-06-25T17:57:49-07:00 — P2 bound local-demo endpoint advertisement
 
 - Cycle: selected the oldest explicitly licensed repository, confirmed no open

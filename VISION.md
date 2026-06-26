@@ -44,12 +44,13 @@ Priority:
 - Keep the full pure Ruby archive suite enforced in pinned hosted validation
 - Keep the Java source compile gate pinned to the historical JRuby 1.7.27 API
   and Java 8 compatibility without committing compiler output
+- Keep the archive reproduction guide explicit that Ruby 2.7 pure verification,
+  native extension experiments, and JRuby source compilation prove different
+  things
 - Treat version 1.7.5 packaging as historical unless explicitly revived
 
 Next priorities:
 
-- Add reproduction notes for running tests on supported Ruby versions
-- Clarify native extension and JRuby build expectations
 - Review parser fixtures for security-regression value
 
 Contribution rules:
