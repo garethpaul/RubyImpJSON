@@ -20,6 +20,8 @@ path and the narrower native-extension and JRuby source-compilation boundaries.
 - Malformed-input fixtures, including the unterminated block comment case
 - Invalid UTF-8 string rejection in the pure and native MRI parsers, backed by
   a byte-exact JSONTestSuite-derived fixture
+- Exception-safe reusable generator state depth for failed pure-Ruby array and
+  hash generation
 - Path-independent pass/fail fixture classification based on fixture basenames
 - Pure parser comment behavior, including line comments terminated by EOF
 - Fixture entries in the checked-in `json` and `json_pure` gemspec manifests
@@ -72,3 +74,4 @@ dependency used by the optional local server example.
 - Preserve security-relevant parser fixtures for malformed JSON and encoding,
   including invalid UTF-8 after an escape
   edge cases.
+- Preserve reusable generator state depth across failed nested generation.

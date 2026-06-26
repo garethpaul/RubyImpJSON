@@ -1,5 +1,39 @@
 # Changes
 
+## 2026-06-26T13:56:04-07:00 — Restore pure-generator state depth after failures
+
+- Selected the next generator edge-case roadmap item after confirming there
+  were no open issues, pull requests, alerts, or overlapping current branches.
+- Reproduced that failed circular array and hash generation left a reusable
+  `JSON::State` at its maximum depth, causing later shallow values to fail.
+- Compared the archived implementation with upstream `ruby/json` commit
+  `168095ccb80b21c2a1db2c6d0b6bf5682ef64ad9`, where generation depth is kept
+  in per-invocation data rather than persisted after failure.
+- Added `test_state_depth_recovers_after_failed_generation` red-first for both
+  collection types, a nonzero starting depth, and immediate shallow reuse.
+- Wrapped each pure-Ruby array and hash depth increment in `ensure`, preserving
+  successful compact and pretty output while restoring exactly the depth each
+  collection owns.
+- Added fail-closed archive contracts for the regression, both exception-safe
+  transforms, completed plan evidence, guidance, and this latest history entry.
+- Validation: all 13 focused generator tests pass. The full pinned Ruby 2.7
+  `make check` gate passes 72 tests with 2,031 assertions, all three temporary
+  package builds, and 77 Make authority cases.
+- The first full gate rejected a line-wrapped README contract phrase; making
+  the required maintenance wording contiguous fixed the documentation-only
+  failure before the complete gate passed.
+- Two independent depth-release mutations failed the focused regression, and
+  five test, implementation, plan, README, and changelog mutations failed the
+  archive metadata gate.
+- Repository-root and external-directory container invocations passed the same
+  complete `make check` boundary.
+- The host has no Ruby runtime, so all executable Ruby validation used the
+  documented digest-pinned container. Java source compilation and hosted
+  CodeQL remain exact-head merge gates; native and JRuby generator runtimes
+  were not claimed.
+- Next: review remaining pure-generator exception paths for focused archive
+  regression value.
+
 ## 2026-06-26T05:34:29-07:00 — Reject invalid UTF-8 JSON strings
 
 - Selected the parser-fixture security review roadmap item and reproduced a
