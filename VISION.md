@@ -21,6 +21,7 @@ Priority:
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
 - Preserve malformed-input fixtures such as unterminated block comments
 - Preserve byte-exact invalid UTF-8 fixtures and cross-MRI rejection behavior
+- Keep reusable pure-generator state depth stable after failed nested values
 - Keep fixture pass/fail classification independent of checkout paths
 - Preserve accepted comment parsing behavior in the pure Ruby parser
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
@@ -52,7 +53,7 @@ Priority:
 
 Next priorities:
 
-- Review generator edge cases for archive-regression value
+- Review remaining generator exception paths for archive-regression value
 
 Contribution rules:
 

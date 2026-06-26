@@ -88,6 +88,8 @@ the separate native-extension and JRuby source-compilation boundaries.
   block comment, preserving parser rejection behavior for archived tests.
 - A reviewed JSONTestSuite fixture verifies that the pure and native MRI
   parsers reject decoded JSON strings containing invalid UTF-8 bytes.
+- Failed nested array or hash generation restores reusable generator state depth,
+  so one rejected value cannot poison later pure-Ruby output.
 - Fixture pass/fail classification uses basenames so checkout directory names
   cannot reclassify malformed JSON fixtures.
 - The pure parser tests also cover accepted comment behavior, including `//`
@@ -179,6 +181,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
   UTF-8 string regression and external fixture provenance.
 - See `docs/plans/2026-06-26-invalid-utf8-string-design.md` for the evidence and
   implementation choice behind cross-MRI decoded-string validation.
+- See `docs/plans/2026-06-26-generator-state-depth.md` for the pure-generator
+  state recovery regression and verification record.
+- See `docs/plans/2026-06-26-generator-state-depth-design.md` for the upstream
+  comparison and exception-safe depth ownership design.
 - See `docs/plans/2026-06-12-archive-vulnerability-review.md` for the archived
   package advisory, gem build, and non-production policy review.
 - See `docs/plans/2026-06-12-gem-package-build-contract.md` for the temporary

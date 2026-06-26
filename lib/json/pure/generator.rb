@@ -304,23 +304,26 @@ module JSON
             result = '{'
             result << state.object_nl
             depth = state.depth += 1
-            first = true
-            indent = !state.object_nl.empty?
-            each { |key,value|
-              result << delim unless first
-              result << state.indent * depth if indent
-              result << key.to_s.to_json(state)
-              result << state.space_before
-              result << ':'
-              result << state.space
-              result << value.to_json(state)
-              first = false
-            }
-            depth = state.depth -= 1
-            result << state.object_nl
-            result << state.indent * depth if indent if indent
-            result << '}'
-            result
+            begin
+              first = true
+              indent = !state.object_nl.empty?
+              each { |key,value|
+                result << delim unless first
+                result << state.indent * depth if indent
+                result << key.to_s.to_json(state)
+                result << state.space_before
+                result << ':'
+                result << state.space
+                result << value.to_json(state)
+                first = false
+              }
+              result << state.object_nl
+              result << state.indent * (depth - 1) if indent
+              result << '}'
+              result
+            ensure
+              state.depth = depth - 1
+            end
           end
         end
 
@@ -343,18 +346,21 @@ module JSON
             result = '['
             result << state.array_nl
             depth = state.depth += 1
-            first = true
-            indent = !state.array_nl.empty?
-            each { |value|
-              result << delim unless first
-              result << state.indent * depth if indent
-              result << value.to_json(state)
-              first = false
-            }
-            depth = state.depth -= 1
-            result << state.array_nl
-            result << state.indent * depth if indent
-            result << ']'
+            begin
+              first = true
+              indent = !state.array_nl.empty?
+              each { |value|
+                result << delim unless first
+                result << state.indent * depth if indent
+                result << value.to_json(state)
+                first = false
+              }
+              result << state.array_nl
+              result << state.indent * (depth - 1) if indent
+              result << ']'
+            ensure
+              state.depth = depth - 1
+            end
           end
         end
 

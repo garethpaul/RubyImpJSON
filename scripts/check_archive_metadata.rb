@@ -20,6 +20,7 @@ java_compile_plan = 'docs/plans/2026-06-16-java-source-compile-gate.md'
 access_log_plan = 'docs/plans/2026-06-25-local-server-access-log-privacy.md'
 bound_port_plan = 'docs/plans/2026-06-25-local-server-bound-port-advertisement.md'
 invalid_utf8_plan = 'docs/plans/2026-06-26-invalid-utf8-string.md'
+generator_state_depth_plan = 'docs/plans/2026-06-26-generator-state-depth.md'
 java_compile_check = 'scripts/check_java_sources.rb'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
@@ -35,6 +36,7 @@ failures << "#{java_compile_plan} is missing" unless File.exist?(java_compile_pl
 failures << "#{access_log_plan} is missing" unless File.exist?(access_log_plan)
 failures << "#{bound_port_plan} is missing" unless File.exist?(bound_port_plan)
 failures << "#{invalid_utf8_plan} is missing" unless File.exist?(invalid_utf8_plan)
+failures << "#{generator_state_depth_plan} is missing" unless File.exist?(generator_state_depth_plan)
 failures << "#{java_compile_check} is missing" unless File.exist?(java_compile_check)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
@@ -194,6 +196,20 @@ end
 package_build_test = File.read('scripts/test_gem_builds.rb')
 unless package_build_test.scan("'tests/fixtures/fail30.json'").length == 3
   failures << 'scripts/test_gem_builds.rb must require fail30.json in all three archive packages'
+end
+
+generator_test = File.read('tests/test_json_generate.rb')
+unless generator_test.include?('test_state_depth_recovers_after_failed_generation') &&
+       generator_test.include?("state = JSON.state.new(:depth => 2, :max_nesting => 4)") &&
+       generator_test.include?("assert_equal '[1]', [1].to_json(state)")
+  failures << 'tests/test_json_generate.rb must prove failed array and hash generation restores reusable state depth'
+end
+
+pure_generator = File.read('lib/json/pure/generator.rb')
+unless pure_generator.scan("ensure\n              state.depth = depth - 1").length == 2 &&
+       pure_generator.scan('state.indent * (depth - 1)').length == 2 &&
+       !pure_generator.include?('depth = state.depth -= 1')
+  failures << 'lib/json/pure/generator.rb must release each array and hash depth increment with ensure'
 end
 
 rakefile = File.read('Rakefile')
@@ -427,6 +443,7 @@ failures << 'README.md must document the gem package build contract' unless read
 failures << 'README.md must document gem license and dependency metadata checks' unless readme.include?('license and dependency metadata')
 failures << 'README.md must document make java-check' unless readme.include?('make java-check')
 failures << 'README.md must document jruby-jars 1.7.27' unless readme.include?('jruby-jars 1.7.27')
+failures << 'README.md must document reusable generator state depth recovery' unless readme.include?('reusable generator state depth')
 docs_plans.each do |plan_path|
   failures << "README.md must reference #{plan_path}" unless readme.include?(plan_path)
 end
@@ -496,6 +513,20 @@ if File.exist?(invalid_utf8_plan)
   end
 end
 
+
+if File.exist?(generator_state_depth_plan)
+  evidence = File.read(generator_state_depth_plan)
+  [
+    'Status: Completed',
+    'failed array and hash generation',
+    '13 focused generator tests',
+    '72 tests',
+    'make check'
+  ].each do |fragment|
+    failures << "#{generator_state_depth_plan} must record verification evidence #{fragment.inspect}" unless evidence.include?(fragment)
+  end
+end
+
 archive_status = ''
 if File.exist?('ARCHIVE_STATUS.md')
   archive_status = File.read('ARCHIVE_STATUS.md')
@@ -505,6 +536,7 @@ if File.exist?('ARCHIVE_STATUS.md')
   failures << 'ARCHIVE_STATUS.md must preserve security-relevant parser fixtures' unless archive_status.include?('security-relevant parser fixtures')
   failures << 'ARCHIVE_STATUS.md must mention the unterminated block comment fixture' unless archive_status.include?('unterminated block comment')
   failures << 'ARCHIVE_STATUS.md must mention invalid UTF-8 rejection' unless archive_status.include?('invalid UTF-8')
+  failures << 'ARCHIVE_STATUS.md must preserve reusable generator state depth' unless archive_status.include?('reusable generator state depth')
   failures << 'ARCHIVE_STATUS.md must document local-only HTTP server scope' unless archive_status.include?('local-only HTTP')
   failures << 'ARCHIVE_STATUS.md must document bounded permutation metadata' unless archive_status.include?('permutation ~> 0.1')
 else
@@ -543,6 +575,17 @@ end
 security = File.read('SECURITY.md')
 failures << 'SECURITY.md must document local-only HTTP server scope' unless security.include?('local-only HTTP')
 failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK integrations' unless security.include?('not Parse SDK')
+failures << 'SECURITY.md must document failed generator state recovery' unless security.include?('failed generator calls restore')
+
+latest_change = File.read('CHANGES.md').split(/^## /)[1].to_s
+[
+  'Restore pure-generator state depth after failures',
+  'test_state_depth_recovers_after_failed_generation',
+  '13 focused generator tests',
+  '72 tests'
+].each do |fragment|
+  failures << "latest CHANGES.md entry must include #{fragment.inspect}" unless latest_change.include?(fragment)
+end
 
 %w[README.md SECURITY.md VISION.md CHANGES.md].each do |path|
   failures << "#{path} must document the Java source compile gate" unless File.read(path).include?('Java source compile gate')

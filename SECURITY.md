@@ -59,6 +59,9 @@ Parser fixture classification should use fixture basenames so checkout paths
 cannot silently move malformed inputs into the passing corpus.
 The pure and native MRI parsers reject decoded strings containing invalid
 UTF-8, with the malformed byte sequence retained as a byte-exact fixture.
+In the maintained pure-Ruby boundary, failed generator calls restore their
+owned array and hash depth increments so reusable state cannot remain poisoned
+after a nesting error.
 The historical `tools/fuzz.rb` example should reject invalid count arguments
 before generating parser payloads.
 Prototype `parseQuery` and Java `parseObject` references are historical

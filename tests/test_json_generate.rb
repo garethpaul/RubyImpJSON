@@ -200,7 +200,23 @@ EOT
     s = JSON.state.new
     assert_equal 0, s.depth
     assert_raises(JSON::NestingError) { ary.to_json(s) }
-    assert_equal 19, s.depth
+    assert_equal 0, s.depth
+  end
+
+  def test_state_depth_recovers_after_failed_generation
+    array = []
+    array << array
+    hash = {}
+    hash['self'] = hash
+
+    [array, hash].each do |value|
+      state = JSON.state.new(:depth => 2, :max_nesting => 4)
+
+      assert_raises(JSON::NestingError) { value.to_json(state) }
+      assert_equal 2, state.depth
+      assert_equal '[1]', [1].to_json(state)
+      assert_equal 2, state.depth
+    end
   end
 
   def test_buffer_initial_length
