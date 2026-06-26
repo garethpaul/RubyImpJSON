@@ -454,6 +454,35 @@ else
   failures << 'ARCHIVE_STATUS.md is missing'
 end
 
+runtime_guide_path = 'docs/REPRODUCING.md'
+if File.exist?(runtime_guide_path)
+  runtime_guide = File.read(runtime_guide_path)
+  normalized_runtime_guide = runtime_guide.gsub(/\s+/, ' ')
+  {
+    'archived package warning' => 'not a supported production package',
+    'pinned pure-Ruby runtime' => 'Ruby 2.7',
+    'pure variant command' => 'JSON=pure',
+    'container reproduction' => 'ruby:2.7@sha256:2347de892e419c7160fc21dec721d5952736909f8c3fbb7f84cb4a07aaf9ce7d',
+    'package-only boundary' => 'does not compile or load the native or JRuby extensions',
+    'native extension prerequisites' => 'Ruby development headers and a C compiler',
+    'native compatibility warning' => 'not a maintained compatibility target',
+    'JRuby compile API' => 'jruby-jars 1.7.27',
+    'Java compatibility boundary' => 'Java 8',
+    'JRuby runtime limitation' => 'does not execute the JRuby extension runtime'
+  }.each do |description, fragment|
+    failures << "#{runtime_guide_path} must document #{description}: #{fragment.inspect}" unless normalized_runtime_guide.include?(fragment)
+  end
+else
+  failures << "#{runtime_guide_path} is missing"
+end
+
+unless readme.include?('docs/REPRODUCING.md')
+  failures << 'README.md must link the archive runtime reproduction guide'
+end
+unless archive_status.include?('docs/REPRODUCING.md')
+  failures << 'ARCHIVE_STATUS.md must link the archive runtime reproduction guide'
+end
+
 security = File.read('SECURITY.md')
 failures << 'SECURITY.md must document local-only HTTP server scope' unless security.include?('local-only HTTP')
 failures << 'SECURITY.md must clarify parser/prototype names are not Parse SDK integrations' unless security.include?('not Parse SDK')

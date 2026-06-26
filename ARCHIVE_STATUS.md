@@ -7,6 +7,9 @@ This repository is a historical snapshot, not an active JSON gem fork.
 Archived `json` 1.7.5 is affected by CVE-2013-0269 and CVE-2020-10663. Do not
 deploy or newly depend on this snapshot.
 
+See `docs/REPRODUCING.md` for the maintained Ruby 2.7 pure-Ruby verification
+path and the narrower native-extension and JRuby source-compilation boundaries.
+
 ## Preserved Surface
 
 - Version: 1.7.5

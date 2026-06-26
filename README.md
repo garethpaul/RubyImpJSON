@@ -40,17 +40,20 @@ Additional scan context:
 ### Prerequisites
 
 - Git
-- Ruby and Bundler
+- Ruby 2.7 for the maintained pure-Ruby archive gate, or Docker to reproduce
+  the exact hosted image
 
 ### Setup
 
 ```bash
 git clone https://github.com/garethpaul/RubyImpJSON.git
 cd RubyImpJSON
-bundle install
+make check
 ```
 
-The setup commands above are derived from repository files. Legacy mobile, Python, or JavaScript samples may require older SDKs or package versions than a modern workstation uses by default.
+No project dependency installation is required for the maintained pure-Ruby
+baseline. See `docs/REPRODUCING.md` for the digest-pinned container command and
+the separate native-extension and JRuby source-compilation boundaries.
 
 ## Running or Using the Project
 
@@ -61,7 +64,9 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 
 ## Testing and Verification
 
-- `bundle exec rake test` or the repository-specific Ruby test command
+- `docs/REPRODUCING.md` is the canonical runtime reproduction guide. It
+  distinguishes the maintained pure-Ruby gate from optional native-extension
+  experiments and JRuby source compilation.
 - `make check` delegates to `make verify`, which runs archive metadata checks
   and the pure-Ruby test corpus with `JSON=pure`, avoiding Bundler and native
   extension compilation for the default local verification path.
@@ -190,6 +195,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   for the decision to advertise only the listener WEBrick actually created.
 - See `docs/plans/2026-06-25-local-server-bound-port-advertisement.md` for the
   executable bound-port regression and verification record.
+- See `docs/plans/2026-06-26-archive-runtime-reproduction.md` for the maintained
+  archive verification and legacy runtime-expectation boundary.
 
 ## Contributing
 
