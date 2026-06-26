@@ -227,6 +227,9 @@ module JSON
           end
           if string.respond_to?(:force_encoding)
             string.force_encoding(::Encoding::UTF_8)
+            unless string.valid_encoding?
+              raise ParserError, "invalid UTF-8 in string"
+            end
           end
           if @create_additions and @match_string
             for (regexp, klass) in @match_string

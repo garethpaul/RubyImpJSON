@@ -1443,6 +1443,11 @@ tr2:
             {p++; cs = 8; goto _out;}
         } else {
             FORCE_UTF8(*result);
+#ifdef HAVE_RUBY_ENCODING_H
+            if (rb_enc_str_coderange(*result) == ENC_CODERANGE_BROKEN) {
+                rb_raise(eParserError, "invalid UTF-8 in string");
+            }
+#endif
             {p = (( p + 1))-1;}
         }
     }

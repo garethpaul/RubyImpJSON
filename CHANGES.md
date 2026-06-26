@@ -1,5 +1,32 @@
 # Changes
 
+## 2026-06-26T05:34:29-07:00 — Reject invalid UTF-8 JSON strings
+
+- Selected the parser-fixture security review roadmap item and reproduced a
+  JSONTestSuite boundary where both MRI implementations returned a string
+  labeled UTF-8 even though its decoded bytes were invalid.
+- Added byte-exact failing fixture `fail30.json` from JSONTestSuite commit
+  `1ef36fa01286573e846ac449e8683f8833c5b26a` and a focused regression that
+  protects its six reviewed bytes.
+- Made the pure parser reject invalid decoded encodings and added matching
+  coderange validation to both the native Ragel source and checked-in generated
+  C parser while retaining deliberate legacy escape compatibility.
+- Added fail-closed archive contracts for fixture bytes, parser guards,
+  generated-source parity, package manifests, completed evidence, and the
+  accepted `pass15` through `pass17` fixtures.
+- Updated all three package checks and the checked-in MRI gemspec manifests so
+  packaged archives retain the security regression fixture.
+- Validation: the pre-fix pure and parser-only native regressions both failed;
+  after the fix, the full pure suite passed 71 tests with 2,023 assertions,
+  three package builds passed, 77 Make authority cases passed, repository and
+  external-directory `make check` passed, and 11 isolated hostile mutations
+  were rejected.
+- Java 8 validation with `jruby-jars 1.7.27` compiled all 12 archived sources
+  into 39 temporary class files; the JRuby decoder required no behavior change
+  because it already rejects invalid UTF-8.
+- Retired the parser-fixture review roadmap item and moved the next focused
+  archive review to generator edge cases.
+
 ## 2026-06-26 — Archive runtime reproduction boundaries
 
 - Added a canonical archive reproduction guide that defines the digest-pinned

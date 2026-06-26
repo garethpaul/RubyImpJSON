@@ -20,6 +20,7 @@ Priority:
 - Keep README and changelog context available
 - Maintain tests for parsing, generation, encoding, additions, and fixtures
 - Preserve malformed-input fixtures such as unterminated block comments
+- Preserve byte-exact invalid UTF-8 fixtures and cross-MRI rejection behavior
 - Keep fixture pass/fail classification independent of checkout paths
 - Preserve accepted comment parsing behavior in the pure Ruby parser
 - Keep checked-in gemspec fixture manifests aligned with the fixture corpus
@@ -51,7 +52,7 @@ Priority:
 
 Next priorities:
 
-- Review parser fixtures for security-regression value
+- Review generator edge cases for archive-regression value
 
 Contribution rules:
 

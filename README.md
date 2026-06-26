@@ -86,6 +86,8 @@ the separate native-extension and JRuby source-compilation boundaries.
   `docs/plans`.
 - The fixture corpus includes malformed-input cases such as an unterminated
   block comment, preserving parser rejection behavior for archived tests.
+- A reviewed JSONTestSuite fixture verifies that the pure and native MRI
+  parsers reject decoded JSON strings containing invalid UTF-8 bytes.
 - Fixture pass/fail classification uses basenames so checkout directory names
   cannot reclassify malformed JSON fixtures.
 - The pure parser tests also cover accepted comment behavior, including `//`
@@ -173,6 +175,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
   2.7 hosted archive boundary.
 - See `docs/plans/2026-06-10-fixture-basename-classification.md` for the
   path-independent fixture classification guard.
+- See `docs/plans/2026-06-26-invalid-utf8-string.md` for the cross-MRI invalid
+  UTF-8 string regression and external fixture provenance.
+- See `docs/plans/2026-06-26-invalid-utf8-string-design.md` for the evidence and
+  implementation choice behind cross-MRI decoded-string validation.
 - See `docs/plans/2026-06-12-archive-vulnerability-review.md` for the archived
   package advisory, gem build, and non-production policy review.
 - See `docs/plans/2026-06-12-gem-package-build-contract.md` for the temporary

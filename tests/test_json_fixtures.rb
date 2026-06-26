@@ -21,6 +21,13 @@ class TestJSONFixtures < Test::Unit::TestCase
     assert !passing_fixture?('/tmp/second-pass/fixtures/fail1.json')
   end
 
+  def test_invalid_utf8_after_escape_fixture
+    fixture = File.join(File.dirname(__FILE__), 'fixtures/fail30.json')
+    source = File.open(fixture, 'rb') { |file| file.read }
+    assert_equal [0x5b, 0x22, 0x5c, 0xe5, 0x22, 0x5d], source.bytes.to_a
+    assert_raises(JSON::ParserError) { JSON.parse(source) }
+  end
+
   def test_passing
     for name, source in @passed
       begin

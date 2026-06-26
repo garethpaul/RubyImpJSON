@@ -18,6 +18,8 @@ path and the narrower native-extension and JRuby source-compilation boundaries.
 - JRuby-related Java sources and gemspec metadata
 - Parser, generator, encoding, additions, and fixture tests
 - Malformed-input fixtures, including the unterminated block comment case
+- Invalid UTF-8 string rejection in the pure and native MRI parsers, backed by
+  a byte-exact JSONTestSuite-derived fixture
 - Path-independent pass/fail fixture classification based on fixture basenames
 - Pure parser comment behavior, including line comments terminated by EOF
 - Fixture entries in the checked-in `json` and `json_pure` gemspec manifests
@@ -67,5 +69,6 @@ dependency used by the optional local server example.
 - Keep example fuzzer arguments explicit before payload generation.
 - Do not remove native or JRuby artifacts without an archive rationale.
 - Do not claim modern gem support without a dedicated compatibility plan.
-- Preserve security-relevant parser fixtures for malformed JSON and encoding
+- Preserve security-relevant parser fixtures for malformed JSON and encoding,
+  including invalid UTF-8 after an escape
   edge cases.
