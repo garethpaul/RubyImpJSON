@@ -484,6 +484,11 @@ static VALUE json_string_unescape(VALUE result, char *string, char *stringEnd)
             fbreak;
         } else {
             FORCE_UTF8(*result);
+#ifdef HAVE_RUBY_ENCODING_H
+            if (rb_enc_str_coderange(*result) == ENC_CODERANGE_BROKEN) {
+                rb_raise(eParserError, "invalid UTF-8 in string");
+            }
+#endif
             fexec p + 1;
         }
     }

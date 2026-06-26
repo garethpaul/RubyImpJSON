@@ -18,7 +18,7 @@ PACKAGES = [
     :licenses => ['GPL-2.0-only', 'Ruby'],
     :permutation => '~> 0.1',
     :rake => nil,
-    :required => ['lib/json.rb', 'tests/fixtures/fail29.json', 'ext/json/ext/parser/parser.c']
+    :required => ['lib/json.rb', 'tests/fixtures/fail29.json', 'tests/fixtures/fail30.json', 'ext/json/ext/parser/parser.c']
   },
   {
     :gemspec => 'json_pure.gemspec',
@@ -28,7 +28,7 @@ PACKAGES = [
     :licenses => ['GPL-2.0-only', 'Ruby'],
     :permutation => '~> 0.1',
     :rake => '~> 13.4.2',
-    :required => ['lib/json.rb', 'lib/json/pure/parser.rb', 'tests/fixtures/fail29.json']
+    :required => ['lib/json.rb', 'lib/json/pure/parser.rb', 'tests/fixtures/fail29.json', 'tests/fixtures/fail30.json']
   },
   {
     :gemspec => 'json-java.gemspec',
@@ -38,7 +38,7 @@ PACKAGES = [
     :licenses => ['GPL-2.0-only', 'Ruby'],
     :permutation => nil,
     :rake => nil,
-    :required => ['lib/json.rb', 'lib/json/ext.rb', 'tests/fixtures/fail29.json', 'COPYING-json-jruby', 'GPL']
+    :required => ['lib/json.rb', 'lib/json/ext.rb', 'tests/fixtures/fail29.json', 'tests/fixtures/fail30.json', 'COPYING-json-jruby', 'GPL']
   }
 ].freeze
 

@@ -19,6 +19,7 @@ server_load_path_plan = 'docs/plans/2026-06-14-server-repository-load-path.md'
 java_compile_plan = 'docs/plans/2026-06-16-java-source-compile-gate.md'
 access_log_plan = 'docs/plans/2026-06-25-local-server-access-log-privacy.md'
 bound_port_plan = 'docs/plans/2026-06-25-local-server-bound-port-advertisement.md'
+invalid_utf8_plan = 'docs/plans/2026-06-26-invalid-utf8-string.md'
 java_compile_check = 'scripts/check_java_sources.rb'
 hosted_validation_workflow = '.github/workflows/check.yml'
 failures << "#{canonical_plan} is missing" unless File.exist?(canonical_plan)
@@ -33,6 +34,7 @@ failures << "#{server_load_path_plan} is missing" unless File.exist?(server_load
 failures << "#{java_compile_plan} is missing" unless File.exist?(java_compile_plan)
 failures << "#{access_log_plan} is missing" unless File.exist?(access_log_plan)
 failures << "#{bound_port_plan} is missing" unless File.exist?(bound_port_plan)
+failures << "#{invalid_utf8_plan} is missing" unless File.exist?(invalid_utf8_plan)
 failures << "#{java_compile_check} is missing" unless File.exist?(java_compile_check)
 failures << "#{hosted_validation_workflow} is missing" unless File.exist?(hosted_validation_workflow)
 failures << 'docs/plans must contain at least one completed plan' if docs_plans.empty?
@@ -148,10 +150,50 @@ else
   failures << "#{unterminated_comment_fixture} is missing"
 end
 
+invalid_utf8_fixture = 'tests/fixtures/fail30.json'
+invalid_utf8_bytes = [0x5b, 0x22, 0x5c, 0xe5, 0x22, 0x5d]
+if File.exist?(invalid_utf8_fixture)
+  fixture = File.open(invalid_utf8_fixture, 'rb') { |file| file.read }
+  failures << "#{invalid_utf8_fixture} must retain the reviewed invalid UTF-8 bytes" unless fixture.bytes.to_a == invalid_utf8_bytes
+else
+  failures << "#{invalid_utf8_fixture} is missing"
+end
+
+%w[tests/fixtures/pass15.json tests/fixtures/pass16.json tests/fixtures/pass17.json].each do |legacy_fixture|
+  failures << "#{legacy_fixture} must retain deliberate legacy escape compatibility" unless File.exist?(legacy_fixture)
+end
+
 fixture_test = File.read('tests/test_json_fixtures.rb')
 unless fixture_test.include?('File.basename(filename)') &&
        fixture_test.include?("'/tmp/second-pass/fixtures/fail1.json'")
   failures << 'tests/test_json_fixtures.rb must classify fixtures by basename, not parent paths'
+end
+unless fixture_test.include?('test_invalid_utf8_after_escape_fixture') &&
+       fixture_test.include?('0xe5') &&
+       fixture_test.include?('assert_raises(JSON::ParserError)')
+  failures << 'tests/test_json_fixtures.rb must reject the exact invalid UTF-8 fixture'
+end
+
+pure_parser = File.read('lib/json/pure/parser.rb')
+unless pure_parser.include?('string.force_encoding(::Encoding::UTF_8)') &&
+       pure_parser.include?('unless string.valid_encoding?') &&
+       pure_parser.include?('raise ParserError, "invalid UTF-8 in string"')
+  failures << 'lib/json/pure/parser.rb must reject decoded strings with invalid UTF-8'
+end
+
+native_utf8_guard = 'rb_enc_str_coderange(*result) == ENC_CODERANGE_BROKEN'
+%w[ext/json/ext/parser/parser.rl ext/json/ext/parser/parser.c].each do |parser_source|
+  source = File.read(parser_source)
+  unless source.include?('FORCE_UTF8(*result);') &&
+         source.include?(native_utf8_guard) &&
+         source.include?('rb_raise(eParserError, "invalid UTF-8 in string");')
+    failures << "#{parser_source} must reject decoded strings with a broken UTF-8 coderange"
+  end
+end
+
+package_build_test = File.read('scripts/test_gem_builds.rb')
+unless package_build_test.scan("'tests/fixtures/fail30.json'").length == 3
+  failures << 'scripts/test_gem_builds.rb must require fail30.json in all three archive packages'
 end
 
 rakefile = File.read('Rakefile')
@@ -440,6 +482,20 @@ if File.exist?(java_compile_plan)
   end
 end
 
+if File.exist?(invalid_utf8_plan)
+  evidence = File.read(invalid_utf8_plan)
+  [
+    'Status: Completed',
+    'JSONTestSuite commit `1ef36fa01286573e846ac449e8683f8833c5b26a`',
+    'pure parser accepted the invalid UTF-8 fixture before the fix',
+    'native parser accepted the invalid UTF-8 fixture before the fix',
+    'parser-only native extension regression passed',
+    'make check'
+  ].each do |fragment|
+    failures << "#{invalid_utf8_plan} must record verification evidence #{fragment.inspect}" unless evidence.include?(fragment)
+  end
+end
+
 archive_status = ''
 if File.exist?('ARCHIVE_STATUS.md')
   archive_status = File.read('ARCHIVE_STATUS.md')
@@ -448,6 +504,7 @@ if File.exist?('ARCHIVE_STATUS.md')
   failures << 'ARCHIVE_STATUS.md must document JSON=pure verification' unless archive_status.include?('JSON=pure')
   failures << 'ARCHIVE_STATUS.md must preserve security-relevant parser fixtures' unless archive_status.include?('security-relevant parser fixtures')
   failures << 'ARCHIVE_STATUS.md must mention the unterminated block comment fixture' unless archive_status.include?('unterminated block comment')
+  failures << 'ARCHIVE_STATUS.md must mention invalid UTF-8 rejection' unless archive_status.include?('invalid UTF-8')
   failures << 'ARCHIVE_STATUS.md must document local-only HTTP server scope' unless archive_status.include?('local-only HTTP')
   failures << 'ARCHIVE_STATUS.md must document bounded permutation metadata' unless archive_status.include?('permutation ~> 0.1')
 else
