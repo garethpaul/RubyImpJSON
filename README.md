@@ -94,6 +94,8 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 - The archive metadata check keeps the example WEBrick server wired to its
   parsed command-line port and validates that port arguments are integers in
   the TCP port range.
+- The local startup message is emitted after WEBrick binds and advertises the
+  actual loopback listener, including an operating-system-assigned test port.
 - The loopback demo disables WEBrick access logs so request targets, query
   values, referrers, and user-agent strings are not written to its error log.
 - The example WEBrick server is a local-only HTTP archive demo bound to
@@ -184,6 +186,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
   compiler boundary for the archived JRuby extension sources.
 - See `docs/plans/2026-06-25-local-server-access-log-privacy.md` for the
   request-metadata logging boundary of the local-only demo.
+- See `docs/plans/2026-06-25-local-server-bound-port-advertisement-design.md`
+  for the decision to advertise only the listener WEBrick actually created.
+- See `docs/plans/2026-06-25-local-server-bound-port-advertisement.md` for the
+  executable bound-port regression and verification record.
 
 ## Contributing
 

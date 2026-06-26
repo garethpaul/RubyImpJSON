@@ -52,6 +52,36 @@ RUBY
     assert_predicate status, :success?, stderr
   end
 
+  def test_create_server_advertises_the_bound_port
+    script = <<'RUBY'
+require 'stringio'
+require './tools/server'
+
+log = StringIO.new
+server = create_server(log, File.expand_path('data'), 0)
+begin
+  bound_port = server.listeners.first.addr[1]
+  raise 'ephemeral listener did not receive a port' unless bound_port > 0
+  expected = "http://127.0.0.1:#{bound_port}"
+  raise "advertised endpoint did not match #{expected}: #{log.string.inspect}" unless log.string.include?(expected)
+  raise 'server advertised unusable port zero' if log.string.include?('http://127.0.0.1:0')
+ensure
+  server.shutdown
+end
+RUBY
+
+    _stdout, stderr, status = Open3.capture3(
+      { 'JSON' => 'pure' },
+      RbConfig.ruby,
+      '-Ilib',
+      '-e',
+      script,
+      :chdir => File.expand_path('..', __dir__)
+    )
+
+    assert_predicate status, :success?, stderr
+  end
+
   def test_json_endpoint_serves_a_valid_local_payload
     script = <<'RUBY'
 require 'json'
