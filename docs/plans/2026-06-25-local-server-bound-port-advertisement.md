@@ -32,5 +32,6 @@ including when callers request an operating-system-assigned port with `0`.
   regression.
 - repository and external-directory `make check` passed in the digest-pinned
   Ruby 2.7 image.
-- Hosted archive, Java, and CodeQL checks plus exact-head Codex review remain
-  required before merge.
+- Implementation head `620445c` passed both hosted Ruby 2.7 archive jobs, both
+  Java 8 source-compilation jobs, and CodeQL for Actions, C/C++, Java/Kotlin,
+  and Ruby. Exact-head Codex review reported no actionable findings.

@@ -22,8 +22,11 @@
   authority cases, archive metadata checks, and three temporary gem builds.
 - Blockers: the host has no Ruby executable, so Ruby behavior uses the same
   digest-pinned Ruby 2.7 image as CI; JRuby runtime behavior is unchanged.
-- Next: require green hosted archive/Java/CodeQL lanes and clean exact-head
-  Codex review before merge.
+- Hosted: implementation head `620445c` passed both Ruby 2.7 archive jobs, both
+  Java 8 source-compilation jobs, and CodeQL for Actions, C/C++, Java/Kotlin,
+  and Ruby. Exact-head Codex review reported no actionable findings.
+- Next: revalidate this documentation-only head, merge PR #12, and synchronize
+  `master`.
 
 ## 2026-06-25T13:09:56-07:00 — P2 local-demo access-log privacy
 
